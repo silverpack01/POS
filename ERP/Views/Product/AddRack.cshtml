@@ -1,0 +1,179 @@
+﻿@model ERPSolution.Models.TblRack
+@{
+    ViewBag.Title = "Rack Management";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+<div class="container-fluid">
+    <section>
+        <div class="row">
+            <div class="col-md-9">
+                <p style="font-weight: bold; font-size: 28px; color: #1b2a4a">Create New Rack`s</p>
+            </div>
+        </div>
+    </section>
+    <section class="mt-4 shadow p-2">
+        <div class="row">
+            <div class="col-md-2" style="display:none">
+                <label><b>Rack ID:</b></label>
+                @Html.TextBoxFor(x => x.RCode, new { @class = "form-control", @readonly = "True" })
+            </div>
+            <div class="col-md-5">
+                <label><b>Rack Name:</b></label>
+                @Html.TextBoxFor(x => x.RackName, new { @class = "form-control" })
+            </div>
+            <div class="col-md-5">
+                <label><b>Note:</b></label>
+                @Html.TextBoxFor(x => x.Description, new { @class = "form-control" })
+            </div>
+            <div class="col-md-2">
+                <input type="submit" class="btn form-control" value="Save Rack" style="background-color: #1b2a4a; color: white; margin-top: 24px" onclick="SaveRack()" />
+            </div>
+        </div>
+    </section>
+    <section>
+        <table class="table table-sm table-bordered table-hover" id="rtbl">
+            <thead>
+                <tr style="background-color: #1b2a4a" class="text-white">
+                    <td style="background-color: #1b2a4a; width: 12%; display: none" class="text-white"><b>ID</b></td>
+                    <td style="background-color: #1b2a4a; width: 10%" class="text-white"><b>ID</b></td>
+                    <td style="background-color: #1b2a4a; width: 50%" class="text-white"><b>Rack</b></td>
+                    <td style="background-color: #1b2a4a; width: 20%" class="text-white"><b>Note</b></td>
+                    <td style="background-color: #1b2a4a; width: 5%" class="text-white"><b>Remove</b></td>
+                    <td style="background-color: #1b2a4a; width: 5%" class="text-white"><b>Edit</b></td>
+                </tr>
+            </thead>
+            <tbody class="rbody"></tbody>
+        </table>
+    </section>
+</div>
+<style>
+
+    thead tr td {
+        font-size: 14px;
+    }
+
+    tbody tr td {
+        font-size: 14px;
+        font-weight: bold;
+    }
+</style>
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script>
+    $(document).ready(function () {
+        //alert();
+        loadData();
+    });
+    function SaveRack() {
+        //alert();
+        let RackName = $("#RackName").val().trim();
+        let Description = $("#Description").val().trim();
+        if (RackName.length != 0) {
+            var empObj = {
+                RackName: RackName,
+                Description: Description
+            };
+            //alert(Barcode + "---" + _saleid + "---" + itemdis + "---" + rate + "---" + qty);
+            $.ajax({
+                url: "/Product/AddNewRack/",
+                data: JSON.stringify(empObj),
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    $("#RackName").val('');
+                    $("#Description").val('');
+                    loadData();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        } else {
+            alert("Enter Rack Name");
+        }
+    };
+    function loadData() {
+        var id = 1;
+        var empObj = {
+            Id: id,
+        };
+        $.ajax({
+            url: "/Product/RackList",
+            data: JSON.stringify(empObj),
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                var html = '';
+                $.each(result, function (key, item) {
+                    html += '<tr>';
+                    html += '<td class="aa" style="font-weight:bold;display:none">' + item.Id + '</td>';
+                    html += '<td class="aa" style="font-weight:bold">' + item.RCode + '</td>';
+                    html += '<td class="aa" style="font-weight:bold" contenteditable="true">' + item.RackName + '</td>';
+                    html += '<td class="aa" style="font-weight:bold" contenteditable="true">' + item.Description + '</td>';
+                    html += '<td class="divhi"> <a href="#" class="btn btn-sm btn-danger" onclick="DeleleNew(' + item.Id + ')">Remove</a></td>';
+                    html += '<td class="divhi next"> <a href="#" class="btn btn-sm btn-warning">Edit</a></td>';
+                    html += '</tr>';
+                });
+                $('.rbody').html(html);
+            },
+            error: function (errormessage) {
+                //alert(errormessage.responseText);
+            }
+        });
+    };
+    function DeleleNew(ID) {
+        var ans = confirm("Are you sure you want to delete this Record?");
+        if (ans) {
+            $.ajax({
+                url: "/Product/DeleteRack/" + ID,
+                type: "POST",
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                success: function (result) {
+                    loadData();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+    };
+    $("#rtbl").on('click', '.next', function () {
+        var currentRow = $(this).closest("tr");
+        var id = currentRow.find("td:eq(0)").text();
+        let rcode = currentRow.find("td:eq(1)").text();
+        let rname = currentRow.find("td:eq(2)").text();
+        let desc = currentRow.find("td:eq(3)").text();
+        if (rname.length != 0) {
+            //alert(catename + '------' + catenametwo);
+            var empObj = {
+                Id: id,
+                RCode: rcode,
+                RackName: rname,
+                Description: desc
+            };
+            $.ajax({
+                url: "/Product/UpdateRack/",
+                data: JSON.stringify(empObj),
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    loadData();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        } else {
+            alert("SYSTEM RESTRICTIONS!", "PLEASE ENTER RACK NAME!", "error");
+        }
+    });
+</script>
+

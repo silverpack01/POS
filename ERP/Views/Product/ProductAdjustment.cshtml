@@ -1,0 +1,558 @@
+@{
+    ViewBag.Title = "Product Adjustment";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <section>
+        <div class="row">
+            <div class="col-md-9">
+                <p class="page-title">Product Adjustment</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="adjustment-card shadow-sm p-2 mt-2">
+        <div class="row">
+            <div class="col-md-2 col-6 mb-2">
+                <label><b>Date:</b></label>
+                <input id="AdjustmentDate" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+
+            <div class="col-md-4 col-6 mb-2">
+                <label><b>Item:</b></label>
+                <select id="ProductId" class="form-control"></select>
+            </div>
+
+            <div class="col-md-2 col-6 mb-2">
+                <label><b>Stock In:</b></label>
+                <input id="StockIn" class="form-control" type="number" min="0" step="0.01" />
+            </div>
+
+            <div class="col-md-2 col-6 mb-2">
+                <label><b>Stock Out:</b></label>
+                <input id="StockOut" class="form-control" type="number" min="0" step="0.01" />
+            </div>
+
+            <div class="col-md-2 col-12 mb-2 d-flex align-items-end">
+                <button id="btnSaveAdjustment" type="button" class="btn save-button form-control">Save</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-3">
+        <div class="row mb-2">
+            <div class="col-12">
+                <p class="records-title">Product Adjustment Records</p>
+            </div>
+        </div>
+
+        <div class="row align-items-end mb-2">
+            <div class="col-md-3 col-6">
+                <input id="SearchItem" class="form-control search-box" type="text" placeholder="Search By Item" />
+            </div>
+            <div class="col-md-2 col-6">
+                <input id="SearchDateFrom" class="form-control search-box" type="date" placeholder="From Date" />
+            </div>
+            <div class="col-md-2 col-7">
+                <input id="SearchDateTo" class="form-control search-box" type="date" placeholder="To Date" />
+            </div>
+            <div class="col-md-2 col-5">
+                <button id="downloadAdjustmentPdf" type="button" class="btn save-button form-control">
+                    <i class="fa fa-download"></i> PDF
+                </button>
+            </div>
+            <div class="col-md-2 col-5">
+                <button id="shareAdjustmentPdf" type="button" class="btn btn-success form-control">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table id="adjustmentTable" class="table table-sm table-bordered table-hover">
+                <thead>
+                    <tr class="table-heading text-white">
+                        <td><b>Date</b></td>
+                        <td><b>Item</b></td>
+                        <td><b>Stock In</b></td>
+                        <td><b>Stock Out</b></td>
+                        <td class="action-column"><b>Action</b></td>
+                    </tr>
+                </thead>
+                <tbody id="adjustmentBody">
+                    @* Adjustment records will be loaded here. *@
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<style>
+    .page-title {
+        color: #1b2a4a;
+        font-size: 28px;
+        font-weight: bold;
+        margin: 20px 0 8px;
+    }
+
+    .records-title {
+        color: #1b2a4a;
+        font-size: 22px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .adjustment-card {
+        background-color: #fff;
+        border-radius: 4px;
+    }
+
+    .form-control,
+    .search-box {
+        height: 38px;
+        border: 2px solid #077a7d;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    #StockOut {
+        border-color: #dc3545;
+    }
+
+    #StockOut:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.25);
+    }
+
+    .save-button {
+        height: 38px;
+        background-color: #1b2a4a;
+        color: white;
+        border: 0;
+        font-size: 15px;
+    }
+
+    .save-button:hover {
+        background-color: #16233d;
+        color: white;
+    }
+
+    #adjustmentTable {
+        margin-top: 8px;
+    }
+
+    #adjustmentTable thead td {
+        background-color: #2f446e;
+        color: white;
+        font-size: 14px;
+        padding: 8px 6px;
+    }
+
+    #adjustmentTable tbody td {
+        font-size: 13px;
+        font-weight: bold;
+        padding: 7px 6px;
+    }
+
+    #adjustmentTable .action-column {
+        width: 86px;
+        text-align: left;
+        white-space: nowrap;
+        padding-left: 2px;
+        padding-right: 4px;
+    }
+
+    #adjustmentTable .action-column .action-button {
+        width: 27px;
+        height: 27px;
+        padding: 0;
+        margin-left: 2px;
+        line-height: 25px;
+    }
+
+    @@media (max-width: 600px) {
+        .page-title {
+            font-size: 20px;
+        }
+
+        .records-title {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+    }
+</style>
+
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+    $(document).ready(function () {
+        loadProduct();
+        loadAdjustment();
+
+        $("#SearchItem, #SearchDateFrom, #SearchDateTo").on("input change", function () {
+            filterAdjustment();
+        });
+
+        $("#btnSaveAdjustment").click(function () {
+            SaveAdjustment();
+        });
+
+        $("#downloadAdjustmentPdf").click(function (event) {
+            event.preventDefault();
+            downloadAdjustmentPdf();
+        });
+
+        $("#shareAdjustmentPdf").click(function (event) {
+            event.preventDefault();
+            shareAdjustmentPdf();
+        });
+
+        $(document).on("click", ".edit-adjustment", function () {
+            editAdjustment($(this).data("id"));
+        });
+
+        $(document).on("click", ".delete-adjustment", function () {
+            deleteAdjustment($(this).data("id"));
+        });
+    });
+
+    var adjustmentData = [];
+    var productData = [];
+    var editingAdjustmentId = 0;
+
+    function loadProduct() {
+        $.ajax({
+            url: "/Product/GetAdjustmentProduct",
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                productData = result;
+
+                $("#ProductId").kendoMultiColumnComboBox({
+                    dataTextField: "Item",
+                    dataValueField: "Id",
+                    height: 500,
+                    columns: [
+                        { field: "Item", title: "Item Name", width: 260 }
+                    ],
+                    filter: "contains",
+                    filterFields: ["Item"],
+                    dataSource: productData
+                });
+
+                $("#SearchItem").kendoComboBox({
+                    dataTextField: "Item",
+                    dataValueField: "Item",
+                    filter: "contains",
+                    dataSource: productData,
+                    change: function () {
+                        filterAdjustment();
+                    }
+                });
+
+                $("#AdjustmentDate").kendoDatePicker({
+                    format: "dd-MM-yyyy",
+                    value: new Date()
+                });
+
+                $("#SearchDateFrom").kendoDatePicker({
+                    format: "dd-MM-yyyy",
+                    change: function () {
+                        filterAdjustment();
+                    }
+                });
+
+                $("#SearchDateTo").kendoDatePicker({
+                    format: "dd-MM-yyyy",
+                    change: function () {
+                        filterAdjustment();
+                    }
+                });
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    };
+
+    function SaveAdjustment() {
+        var productCombo = $("#ProductId").data("kendoMultiColumnComboBox");
+        
+        var productId = productCombo ? productCombo.value() : $("#ProductId").val();
+        
+        var adjustmentDatePicker = $("#AdjustmentDate").data("kendoDatePicker");
+        
+        var adjustmentDate = adjustmentDatePicker && adjustmentDatePicker.value()
+            ? kendo.toString(adjustmentDatePicker.value(), "yyyy-MM-dd")
+            : $("#AdjustmentDate").val();
+        
+        var stockIn = parseFloat($("#StockIn").val()) || 0;
+        
+        var stockOut = parseFloat($("#StockOut").val()) || 0;
+
+        if (!adjustmentDate) {
+            alert("Enter Date");
+            return;
+        }
+
+        if (productId.length == 0) {
+            alert("Please Select Item");
+            return;
+        }
+
+        if (stockIn <= 0 && stockOut <= 0) {
+            alert("Please Enter Stock In Or Stock Out");
+            return;
+        }
+
+        if (stockIn > 0 && stockOut > 0) {
+            alert("Enter Stock In Or Stock Out");
+            return;
+        }
+
+        var empObj = {
+            Id: editingAdjustmentId,
+            ProductId: productId,
+            StockIn: stockIn,
+            StockOut: stockOut,
+            Date: adjustmentDate
+        };
+
+        $.ajax({
+            url: "/Product/AddProductAdjustment/",
+            data: JSON.stringify(empObj),
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.success) {
+                    var wasEditing = editingAdjustmentId > 0;
+                    resetAdjustmentForm();
+                    loadAdjustment();
+                    alert(wasEditing ? "Adjustment Updated Successfully" : "Adjustment Saved Successfully");
+                } else {
+                    alert(result.message);
+                }
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    };
+
+    function editAdjustment(id) {
+        var adjustment = adjustmentData.find(function (item) {
+            return String(item.Id) === String(id);
+        });
+
+        if (!adjustment) {
+            return;
+        }
+
+        var product = productData.find(function (item) {
+            return String(item.Barcode) === String(adjustment.Barcode) &&
+                String(item.BatchNo || '') === String(adjustment.BatchNo || '');
+        });
+        var productCombo = $("#ProductId").data("kendoMultiColumnComboBox");
+        var adjustmentDatePicker = $("#AdjustmentDate").data("kendoDatePicker");
+
+        if (productCombo && product) {
+            productCombo.value(product.Id);
+        }
+
+        if (adjustmentDatePicker) {
+            adjustmentDatePicker.value(adjustment.Date ? new Date(adjustment.Date) : new Date());
+        }
+
+        $("#StockIn").val(adjustment.StockIn || '');
+        $("#StockOut").val(adjustment.StockOut || '');
+        editingAdjustmentId = adjustment.Id;
+        $("#btnSaveAdjustment").text("Update");
+    }
+
+    function deleteAdjustment(id) {
+        if (!confirm("Are you sure you want to delete this adjustment?")) {
+            return;
+        }
+
+        $.ajax({
+            url: "/Product/DeleteProductAdjustment?id=" + id,
+            type: "POST",
+            dataType: "json",
+            success: function (result) {
+                if (result.success) {
+                    loadAdjustment();
+                    alert("Adjustment Deleted Successfully");
+                } else {
+                    alert(result.message);
+                }
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+
+    function resetAdjustmentForm() {
+        editingAdjustmentId = 0;
+        var productCombo = $("#ProductId").data("kendoMultiColumnComboBox");
+        var adjustmentDatePicker = $("#AdjustmentDate").data("kendoDatePicker");
+
+        if (productCombo) {
+            productCombo.value("");
+        }
+
+        if (adjustmentDatePicker) {
+            adjustmentDatePicker.value(new Date());
+        }
+
+        $("#StockIn").val('');
+        $("#StockOut").val('');
+        $("#btnSaveAdjustment").text("Save");
+    }
+
+    async function createAdjustmentPdf() {
+        if (!window.html2canvas || !window.jspdf) {
+            alert("PDF library load nahi ho saki.");
+            return null;
+        }
+
+        var printArea = $("<div>")
+            .css({
+                position: "absolute",
+                left: "-10000px",
+                top: "0",
+                width: "900px",
+                padding: "24px",
+                backgroundColor: "#ffffff",
+                color: "#222222"
+            })
+            .append("<h2 style='text-align:center;margin-bottom:20px;'>Product Adjustment Report</h2>");
+
+        var table = $("#adjustmentTable").clone().removeAttr("id");
+        table.find(".action-column").remove();
+        table.css({ width: "100%", borderCollapse: "collapse" });
+        table.find("td").css({ border: "1px solid #333", padding: "8px" });
+        printArea.append(table);
+        $("body").append(printArea);
+
+        var canvas = await html2canvas(printArea[0], { scale: 2 });
+        printArea.remove();
+
+        var image = canvas.toDataURL("image/png");
+        var pdf = new window.jspdf.jsPDF("p", "mm", "a4");
+        var pageWidth = pdf.internal.pageSize.getWidth();
+        var pageHeight = pdf.internal.pageSize.getHeight();
+        var imageHeight = (canvas.height * pageWidth) / canvas.width;
+        var heightLeft = imageHeight;
+        var position = 0;
+
+        pdf.addImage(image, "PNG", 0, position, pageWidth, imageHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft > 0) {
+            position = heightLeft - imageHeight;
+            pdf.addPage();
+            pdf.addImage(image, "PNG", 0, position, pageWidth, imageHeight);
+            heightLeft -= pageHeight;
+        }
+
+        return { pdf: pdf, fileName: "Product-Adjustment-Report.pdf" };
+    }
+
+    async function downloadAdjustmentPdf() {
+        var result = await createAdjustmentPdf();
+        if (result) {
+            result.pdf.save(result.fileName);
+        }
+    }
+
+    async function shareAdjustmentPdf() {
+        var result = await createAdjustmentPdf();
+        if (!result) {
+            return;
+        }
+
+        var file = new File([result.pdf.output("blob")], result.fileName, {
+            type: "application/pdf"
+        });
+
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    title: "Product Adjustment Report",
+                    files: [file]
+                });
+                return;
+            } catch (error) {
+                if (error.name === "AbortError") {
+                    return;
+                }
+            }
+        }
+
+        result.pdf.save(result.fileName);
+        window.open("https://wa.me/?text=" + encodeURIComponent("Product Adjustment Report"), "_blank");
+    }
+
+    function loadAdjustment() {
+        $.ajax({
+            url: "/Product/ProductAdjustmentList",
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                adjustmentData = result;
+                filterAdjustment();
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    };
+
+    function filterAdjustment() {
+        var itemName = $("#SearchItem").val().toUpperCase().trim();
+        var fromDate = $("#SearchDateFrom").val();
+        var toDate = $("#SearchDateTo").val();
+        var fromDatePicker = $("#SearchDateFrom").data("kendoDatePicker");
+        var toDatePicker = $("#SearchDateTo").data("kendoDatePicker");
+
+        if (fromDatePicker && fromDatePicker.value()) {
+            fromDate = kendo.toString(fromDatePicker.value(), "yyyy-MM-dd");
+        }
+
+        if (toDatePicker && toDatePicker.value()) {
+            toDate = kendo.toString(toDatePicker.value(), "yyyy-MM-dd");
+        }
+
+        var html = '';
+
+        $.each(adjustmentData, function (key, item) {
+            var itemText = (item.Item || '').toUpperCase();
+            var itemDate = item.Date ? item.Date.substring(0, 10) : '';
+
+            if ((itemName == '' || itemText.indexOf(itemName) > -1) &&
+                (fromDate == '' || itemDate >= fromDate) &&
+                (toDate == '' || itemDate <= toDate)) {
+                html += '<tr>';
+                html += '<td>' + (item.Date ? item.Date.substring(0, 10) : '') + '</td>';
+                html += '<td>' + (item.Item || '') + '</td>';
+                html += '<td>' + (item.StockIn || 0) + '</td>';
+                html += '<td>' + (item.StockOut || 0) + '</td>';
+                html += '<td class="action-column">';
+                html += '<button type="button" class="btn btn-sm btn-warning action-button edit-adjustment" title="Edit" data-id="' + item.Id + '"><i class="fa fa-edit"></i></button>';
+                html += '<button type="button" class="btn btn-sm btn-danger action-button delete-adjustment" title="Delete" data-id="' + item.Id + '"><i class="fa fa-trash"></i></button>';
+                html += '</td>';
+                html += '</tr>';
+            }
+        });
+
+        $("#adjustmentBody").html(html);
+    };
+</script>

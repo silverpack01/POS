@@ -1,0 +1,178 @@
+﻿@model ERPSolution.Models.TblCategory
+@{
+    ViewBag.Title = "Category";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="">
+    <section>
+        <div class="row">
+            <div class="col-md-9">
+                <p style="font-weight: bold; color: #077A7D">Create New Category</p>
+            </div>
+        </div>
+    </section>
+    <section class=" shadow p-1">
+        <div class="row">
+            <div class="col-md-2" style="display:none">
+                <label><b>Category ID:</b></label>
+                @Html.TextBoxFor(x => x.CId, new { @class = "form-control", @readonly = "True" })
+            </div>
+            <div class="col-md-10 col-8">
+                <label><b>Category Name:</b></label>
+                @Html.TextBoxFor(x => x.CategoryName, new { @class = "form-control" })
+            </div>
+            <div class="col-md-2 col-4">
+                <input type="submit" class="btn form-control" onclick="SaveCategory()" value="Save" style="background-color: #077A7D; color: white; margin-top: 24px" />
+            </div>
+        </div>
+    </section>
+    <section>
+        <table class="table table-sm table-bordered table-hover" id="ctbl">
+            <thead>
+                <tr style="background-color: #077A7D" class="text-white">
+                    <td style="background-color: #077A7D; width: 15%; display: none" class="text-white"><b>ID</b></td>
+                    <td style="background-color: #077A7D; width: 15%" class="text-white"><b>ID</b></td>
+                    <td style="background-color: #077A7D; width: 50%" class="text-white"><b>Category Name</b></td>
+                    <td style="background-color: #077A7D; width: 5%" class="text-white"><b><i class="fa fa-remove"></i></b></td>
+                    <td style="background-color: #077A7D; width: 5%" class="text-white"><b><i class="fa fa-pencil"></i></b></td>
+                </tr>
+            </thead>
+            <tbody class="cbody"></tbody>
+        </table>
+    </section>
+</div>
+<style>
+    p {
+        font-size: 28px;
+    }
+
+    thead tr td {
+        font-size: 14px;
+    }
+
+    tbody tr td {
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    @@media(max-width: 600px) {
+        p {
+            font-size: 18px;
+        }
+    }
+</style>
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script>
+    $(document).ready(function () {
+        loadData();
+    });
+    function SaveCategory() {
+        //alert();
+        let CategoryName = $("#CategoryName").val().trim();
+        if (CategoryName.length != 0) {
+            var empObj = {
+                CategoryName: CategoryName
+            };
+            //alert(Barcode + "---" + _saleid + "---" + itemdis + "---" + rate + "---" + qty);
+            $.ajax({
+                url: "/Admin/AddNewCate/",
+                data: JSON.stringify(empObj),
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    $("#CategoryName").val('');
+                    loadData();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        } else {
+            alert("Enter Category Name");
+        }
+    };
+    function loadData() {
+        var id = 1;
+        var empObj = {
+            Id: id,
+        };
+        $.ajax({
+            url: "/Admin/CategoryList",
+            data: JSON.stringify(empObj),
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                var html = '';
+                $.each(result, function (key, item) {
+                    html += '<tr>';
+                    html += '<td class="aa" style="font-weight:bold;display:none">' + item.Id + '</td>';
+                    html += '<td class="aa" style="font-weight:bold">' + item.CId + '</td>';
+                    html += '<td class="aa" style="font-weight:bold" contenteditable="true">' + item.CategoryName + '</td>';
+                    html += '<td class="divhi"> <a href="#" class="btn btn-sm btn-danger form-control" onclick="DeleleNew(' + item.Id + ')"><i class="fa fa-remove"></i></a></td>';
+                    html += '<td class="divhi next"> <a href="#" class="btn btn-sm btn-warning form-control"><i class="fa fa-pencil"></i></a></td>';
+                    html += '</tr>';
+                });
+                $('.cbody').html(html);
+            },
+            error: function (errormessage) {
+                //alert(errormessage.responseText);
+            }
+        });
+    };
+    function DeleleNew(ID) {
+        var ans = confirm("Are you sure you want to delete this Record?");
+        if (ans) {
+            $.ajax({
+                url: "/Admin/DeleteCate/" + ID,
+                type: "POST",
+                contentType: "application/ssjson;charset=UTF-8",
+                dataType: "json",
+                success: function (result) {
+                    loadData();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+    };
+    $("#ctbl").on('click', '.next', function () {
+        var currentRow = $(this).closest("tr");
+        var id = currentRow.find("td:eq(0)").text();
+        let cid = currentRow.find("td:eq(1)").text();
+        let cname = currentRow.find("td:eq(2)").text();
+        if (cname.length != 0) {
+            //alert(catename + '------' + catenametwo);
+            var empObj = {
+                Id: id,
+                CId: cid,
+                CategoryName: cname
+            };
+            $.ajax({
+                url: "/Admin/UpdateCate/",
+                data: JSON.stringify(empObj),
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    loadData();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        } else {
+            alert("SYSTEM RESTRICTIONS!\nPLEASE ENTER CATEGORY NAME!\n Empty Field Error");
+            loadData();
+        }
+    });
+</script>
+

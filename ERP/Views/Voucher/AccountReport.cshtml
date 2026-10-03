@@ -1,0 +1,148 @@
+﻿@model IEnumerable<ERPSolution.Models.TblLedger>
+@{
+    ViewBag.Title = "AccountReport";
+    Layout = "~/Views/Shared/_FinanceLayout.cshtml";
+}
+<div class="container-fluid">
+    <center>  <p style="font-weight: bold; font-size: 28px; color: #D84040">Accounts Report</p></center>
+    <section>
+        <div class="row">
+            <div class="col-md-3">
+                <label>Select Account</label>
+                <input type="text" id="acccode" class="form-control form-control-lg" placeholder="Account Register" />
+            </div>
+            <div class="col-md-3">
+                <label>From Date</label>
+                <input type="text" id="fdate" placeholder="Select First Date" class="form-control mt-1 " />
+            </div>
+            <div class="col-md-3">
+                <label>To Date</label>
+                <input type="text" id="sdate" placeholder="Select Second Date" class="form-control mt-1 " />
+            </div>
+            <div class="col-md-3 mt-2">
+                <button id="searchButton" class="btn btn-primary mt-3" onclick="filterVouchers()">Search</button>
+                <button id="resetButton" class="btn btn-secondary mt-3" onclick="resetFilters()">Reset</button>
+
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="col-md-12">
+            <p style="text-align:center;color:#808080;font-weight:bold">@ViewBag.msg</p>
+        </div>
+
+        <table class="table table-sm table-bordered table-hover mt-5">
+            <thead>
+                <tr class="bg-danger text-white">
+                    <td style="width: 15%; background-color: #d84040; color:white;">Date</td>
+                    <td style="width: 24%; background-color: #d84040; color: white;">Acc Name</td>
+                    <td style="width: 24%; background-color: #d84040; color: white;">Narration</td>
+                    <td style="width: 12%; background-color: #d84040; color: white;">Credit</td>
+                    <td style="width: 12%; background-color: #d84040; color: white;">Debit</td>
+                </tr>
+            </thead>
+            <tbody id="voucherTable">
+                @foreach (var i in Model)
+                {
+                    <tr data-account="@i.Account_Name">
+                        <td>@i.Date.Value.ToString("dd/MM/yyyy")</td>
+                        <td>@i.Account_Name</td>
+                        <td>@i.Narration</td>
+                        <td>@i.Credit</td>
+                        <td>@i.Debit</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr class="bg-light text-dark">
+                    <td colspan="3"></td>
+                    <td class="font-weight-bold"><b>Total:@Model.Sum(x => x.Credit)</b></td>
+                    <td class="font-weight-bold"><b>Total:@Model.Sum(x => x.Debit)</b></td>
+                </tr>
+            </tfoot>
+        </table>
+    </section>
+</div>
+
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#fdate").kendoDatePicker({ format: "dd/MM/yyyy" });
+        $("#sdate").kendoDatePicker({ format: "dd/MM/yyyy" });
+
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "/Voucher/getLedger",
+                    dataType: "json"
+                }
+            }
+        });
+
+        $("#acccode").kendoMultiColumnComboBox({
+            dataTextField: "Account_Name",
+            dataValueField: "Account_Name",
+            height: 450,
+            columns: [
+                { field: "Account_Name", title: "Acc Holder", width: 350 }
+            ],
+            filter: "contains",
+            filterFields: ["AccCode", "Acc_Holder", "Balance"],
+            dataSource: dataSource
+        });
+    });
+
+    function filterVouchers() {
+        var selectedAccount = $("#acccode").val().trim();
+        var firstDateStr = $("#fdate").val();
+        var secondDateStr = $("#sdate").val();
+
+        // Validate selections
+        if (selectedAccount && (!firstDateStr || !secondDateStr)) {
+            alert("Please select both dates.");
+            return;
+        }
+        if (!selectedAccount && (firstDateStr || secondDateStr)) {
+            alert("Please select an account.");
+            return;
+        }
+        if (!selectedAccount && !firstDateStr && !secondDateStr) {
+            alert("Please select an account and date range.");
+            return;
+        }
+
+        var firstDate = new Date(firstDateStr.split("/").reverse().join("-"));
+        var secondDate = new Date(secondDateStr.split("/").reverse().join("-"));
+
+        if (firstDate > secondDate) {
+            alert("First date cannot be later than the second date.");
+            return;
+        }
+
+        $("#voucherTable tr").each(function () {
+            var rowAccount = $(this).find("td:nth-child(2)").text().trim();
+            var rowDateStr = $(this).find("td:first").text().trim();
+            var rowDate = new Date(rowDateStr.split("/").reverse().join("-"));
+
+
+            var accountMatch = rowAccount === selectedAccount;
+            var dateMatch = rowDate >= firstDate && rowDate <= secondDate;
+
+            $(this).toggle(accountMatch && dateMatch);
+        });
+    }
+
+    function resetFilters() {
+        $("#acccode").data("kendoMultiColumnComboBox").value("");
+        $("#fdate").val("");
+        $("#sdate").val("");
+        $("#voucherTable tr").show();
+    }
+    
+</script>

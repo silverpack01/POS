@@ -1,0 +1,67 @@
+﻿
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+
+    <!-- Bootstrap CSS (CDN version) -->
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <!-- Optional: Add your custom CSS -->
+    <link href="~/Content/navbar.css" rel="stylesheet" />
+    <link href="~/Content/navbar2.css" rel="stylesheet" />
+    <link href="~/Content/navbar3.css" rel="stylesheet" />
+</head>
+<body style="font-family:Verdana, Geneva, Tahoma, sans-serif">
+
+
+    <!-- Second Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar2" style="background-color: #7AE2CF">
+            <div class="container">
+                <a class="navbar-brand" href="@Url.Action("Home", "Admin")">DASHBOARD</a>
+                <a class="navbar-brand"> <div id="clock" style="font-size: 24px; font-weight: bold;"></div></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav2" aria-controls="navbarNav2" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav2">
+                    <ul class="navbar-nav ml-auto">
+                    </ul>
+                </div>
+                @{
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        <a class="text-white" href="@Url.Action("Home", "Admin")">Welcome Dear- @User.Identity.Name </a>
+                    }
+                }
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="container-fluid mt-2">
+        @RenderBody()
+    </main>
+    <!-- Bootstrap JS and jQuery (Needed for dropdown functionality) -->
+
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <!-- Your custom JavaScript -->
+    <script src="~/Scripts/navbar.js"></script>
+    <script src="~/Scripts/navbar2.js"></script>
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            const dateString = now.toLocaleDateString();
+            document.getElementById("clock").innerHTML = dateString + " " + timeString;
+        }
+
+        // Initial call
+        updateClock();
+
+        // Update every second
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>

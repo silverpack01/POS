@@ -1,0 +1,182 @@
+@{
+    ViewBag.Title = "New Sales Invoice";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<div class="sales-invoice-page">
+    <input type="hidden" id="saleid" /><input type="hidden" id="uid" />
+    <input type="hidden" id="contact" /><input type="hidden" id="time" />
+    <input type="hidden" id="comp" /><input type="hidden" id="rt" />
+    <div id="receipt-profile" hidden
+         data-name="@ERPSolution.Controllers.TblProfileController.Name()"
+         data-address="@ERPSolution.Controllers.TblProfileController.Address()"
+         data-mobile="@ERPSolution.Controllers.TblProfileController.Mobile()"
+         data-phone="@ERPSolution.Controllers.TblProfileController.Phone()"></div>
+
+    <div class="sales-layout">
+        <main class="sales-main">
+            <section class="sales-card sales-entry-card">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label class="form-label" for="custid">Customer Account</label>
+                        <input class="form-control" id="custid" placeholder="Select Customer" autocomplete="off" />
+                        <input type="hidden" id="ccode" /><input type="hidden" id="cname" />
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label" for="date">Invoice Date</label>
+                        <input class="form-control" id="date" type="text" placeholder="Select date" autocomplete="off" />
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label" for="sdate">Delivery Date</label>
+                        <input class="form-control" id="sdate" type="text" placeholder="Select date" autocomplete="off" />
+                    </div>
+                </div>
+            </section>
+
+            <section class="sales-card sales-item-entry">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-8">
+                        <label class="form-label" for="Item">Item Description</label>
+                        <input class="form-control" id="Item" placeholder="Enter item description" autocomplete="off" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="itemImage">Item Image</label>
+                        <div class="image-picker-row">
+                            <input class="form-control" id="itemImage" type="file" accept="image/*" capture="environment" />
+                            <img id="itemImagePreview" class="item-image-preview" alt="Selected item preview" />
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label" for="qty">Quantity</label>
+                        <input class="form-control" id="qty" type="number" min="0" step="0.01" placeholder="0.00" autocomplete="off" />
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label" for="inchx">Height</label>
+                        <input class="form-control" id="inchx" type="number" min="0" step="0.01" placeholder="0.00" autocomplete="off" />
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label" for="inchy">Width</label>
+                        <input class="form-control" id="inchy" type="number" min="0" step="0.01" placeholder="0.00" autocomplete="off" />
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label" for="rate">Rate</label>
+                        <div class="input-group">
+                            <input class="form-control" id="rate" type="number" min="0" step="0.01" placeholder="0.00" autocomplete="off" />
+                            <button type="button" class="btn btn-success" id="save-invoice-from-rate" title="Save Invoice"><i class="fa fa-check"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="sales-card sales-items-card">
+                <div class="table-responsive sales-table-wrap" id="div_print">
+                    <table class="table align-middle mb-0" id="itemtbl">
+                        <thead class="thhide">
+                            <tr class="sales-print-header">
+                                <th colspan="10"><strong>@ERPSolution.Controllers.TblProfileController.Name()</strong><span>Invoice # <b id="tsinv"></b></span><small>@ERPSolution.Controllers.TblProfileController.Address() · @ERPSolution.Controllers.TblProfileController.Mobile() / @ERPSolution.Controllers.TblProfileController.Phone()</small></th>
+                            </tr>
+                            <tr class="sales-print-meta"><th colspan="5">Account: <span id="tcname"></span><br />Contact: <span id="tcont"></span></th><th colspan="5">Invoice Date: <span id="tidate"></span><br />Delivery Date: <span id="tddate"></span></th></tr>
+                        </thead>
+                        <thead>
+                            <tr>
+                                <th class="d-none">ID</th><th class="d-none">Sale ID</th><th>Item Description</th><th>Qty</th><th>Height</th><th>Width</th><th>Total Area</th><th>Rate</th><th class="text-end">Amount</th><th>Image</th><th class="sales-action-column">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="itembody"></tbody><tbody class="itembody2"></tbody>
+                    </table>
+                </div>
+                <div class="tfhide sales-print-total"><span>Total: <b id="tamt"></b></span><span>Discount: <b id="tdis"></b></span><span>Net Total: <b id="tgtotal"></b></span></div>
+            </section>
+        </main>
+
+        <aside class="sales-summary">
+            <section class="sales-card sales-summary-card">
+                <h3>Invoice Calculations</h3>
+                <div class="summary-balance-grid">
+                    <div class="summary-balance"><label for="pbal">Previous Balance</label><input class="form-control" id="pbal" type="number" readonly /></div>
+                    <div class="summary-balance"><label for="previous-rate">Previous Rate</label><input class="form-control" id="previous-rate" type="number" value="0.00" readonly /></div>
+                </div>
+                <div class="summary-grid">
+                    <div><label class="form-label" for="totalamt">Total Amount</label><input class="form-control" id="totalamt" type="text" readonly /></div>
+                    <div><label class="form-label" for="totalfeets">Total Area</label><input class="form-control" id="totalfeets" type="text" readonly /></div>
+                    <div><label class="form-label" for="discount">Discount</label><input class="form-control" id="discount" type="number" min="0" step="0.01" value="0" /></div>
+                    <div><label class="form-label" for="nettotal">Net Total</label><input class="form-control" id="nettotal" type="text" readonly /></div>
+                    <div><label class="form-label" for="pmode">Payment Account</label><input id="pmode" class="form-control" placeholder="Select payment account" autocomplete="off" /></div>
+                    <div><label class="form-label" for="payment">Advance Payment</label><input class="form-control" id="payment" type="number" min="0" step="0.01" value="0" /></div>
+                </div>
+                <div class="summary-actions">
+                    <button type="button" class="btn btn-primary" onclick="printdiv('div_print')"><i class="fa fa-print"></i> Print Receipt</button>
+                    <button type="button" class="btn btn-danger" onclick="CancelInvoice()"><i class="fa fa-trash"></i> Delete Invoice</button>
+                    <button type="button" class="btn btn-dark" onclick="Refresh()"><i class="fa fa-refresh"></i> Refresh Invoice</button>
+                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#myModal"><i class="fa fa-pencil"></i> Edit Previous Invoices</button>
+                </div>
+            </section>
+        </aside>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="previousInvoicesTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title" id="previousInvoicesTitle">Previous Sales Invoices</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+        <div class="modal-body">
+            <div class="row g-2 mb-3">
+                <div class="col-md-5"><label class="form-label" for="fdate">From Date</label><input type="text" id="fdate" class="form-control" placeholder="From date" /></div>
+                <div class="col-md-5"><label class="form-label" for="ldate">To Date</label><input type="text" id="ldate" class="form-control" placeholder="To date" /></div>
+                <div class="col-md-2 d-flex align-items-end"><button type="button" class="btn btn-primary w-100" onclick="SearchloadData()">Search</button></div>
+            </div>
+            <div class="table-responsive sales-table-wrap"><table class="table table-hover align-middle mb-0" id="stbl"><thead><tr><th>Invoice #</th><th>Date</th><th>Account</th><th>Total</th><th>Discount</th><th>Net Total</th><th>Payment</th><th>Mode</th><th>Action</th></tr></thead><tbody class="spobody"></tbody></table></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div>
+    </div></div>
+</div>
+
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<link href="~/Content/sales-receipt.css" rel="stylesheet" />
+<link href="~/Font/font-awesome.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script src="~/JsFiles/subSaleJs.js?v=@DateTime.Now.Ticks"></script>
+
+<style>
+    .sales-invoice-page { max-width: 1500px; margin: 0 auto; padding: 8px 8px 22px; color: #1b2a4a; }.sales-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(330px, 1fr); gap: 10px; align-items: start; }.sales-card { padding: 10px; margin-bottom: 10px; border: 1px solid #d9e1ec; border-radius: 9px; background: #fff; box-shadow: 0 2px 7px rgba(27,42,74,.05); }.sales-card .form-label { margin: 0 0 3px; color: #243b5a; font-weight: 700; font-size: .78rem; }.sales-card .form-control, .sales-card .form-select { min-height: 34px; font-size: .82rem; padding: 5px 9px; }.sales-entry-card, .sales-item-entry { padding: 8px 10px; }.sales-items-card { padding: 7px; }.sales-table-wrap { overflow-x: auto; border: 1px solid #e4eaf2; border-radius: 7px; }.sales-table-wrap thead th { padding: 8px 9px; background: #1b2a4a; color: #fff; font-size: .72rem; white-space: nowrap; }.sales-table-wrap tbody td { padding: 7px 9px; font-size: .77rem; }.sales-action-column { width: 60px; }.sales-print-header, .sales-print-meta { display: none; }.sales-print-total { display: none; justify-content: flex-end; gap: 18px; padding: 8px 3px; font-size: .78rem; }.sales-summary-card { padding: 12px; }.sales-summary-card h3 { margin: -1px 0 8px; padding: 0 0 7px; border-top: 6px solid #1b2a4a; border-bottom: 6px solid #1b2a4a; color: #1b2a4a; text-align: center; font-size: 1.55rem; font-weight: 800; }.summary-balance { margin-bottom: 8px; }.summary-balance label { display: block; margin-bottom: 3px; font-size: .78rem; font-weight: 700; }.summary-balance .form-control { background: #edf4ff; font-size: 1.2rem; }.summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }.summary-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 10px; }.summary-actions .btn { min-height: 36px; padding: 5px 7px; font-size: .75rem; }.xyz { max-height: 70vh; overflow-y: auto; }.sublimation-sale-page { border-top: 4px solid #1b2a4a; margin-top: 8px; }.sublimation-heading { margin: 0 0 10px; padding: 8px 10px; border-bottom: 4px solid #1b2a4a; color: #1b2a4a; font-size: 1.35rem; font-weight: 800; text-align: center; }
+    @@media (max-width: 900px) { .sales-layout { grid-template-columns: 1fr; }.sales-summary { order: 2; } }@@media (max-width: 600px) { .sales-invoice-page { padding: 5px; }.summary-actions { grid-template-columns: 1fr; }.sales-table-wrap thead th, .sales-table-wrap tbody td { padding: 6px; font-size: .7rem; } }
+</style>
+
+<style>
+    .summary-balance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .image-picker-row { display: flex; align-items: center; gap: 6px; }.image-picker-row .form-control { min-width: 0; }.item-image-preview { display: none; flex: 0 0 48px; width: 48px; height: 48px; border: 1px solid #d9e1ec; border-radius: 5px; object-fit: cover; }.table-item-image { display: block; width: 42px; height: 42px; margin: 0 auto; border: 1px solid #d9e1ec; border-radius: 5px; object-fit: cover; }.no-item-image { color: #9aa6b2; font-size: .9rem; }
+    #itemtbl { table-layout: fixed; width: 100%; } #itemtbl th, #itemtbl td { text-align: center; vertical-align: middle; } #itemtbl th:nth-child(3), #itemtbl td:nth-child(3) { text-align: left; width: 23%; } #itemtbl th:nth-child(10), #itemtbl td:nth-child(10) { width: 62px; } #itemtbl th:nth-child(11), #itemtbl td:nth-child(11) { width: 60px; }
+
+    @@media (max-width: 600px) {
+        .sales-invoice-page { width: 100%; padding: 5px; overflow-x: hidden; }
+        .sales-card { padding: 7px; margin-bottom: 7px; }
+        .sales-card .form-control,
+        .sales-card .form-select { min-height: 38px; font-size: .8rem; }
+        .sales-summary-card h3 { font-size: 1.15rem; border-top-width: 4px; border-bottom-width: 4px; }
+        .summary-grid { grid-template-columns: 1fr; gap: 6px; }
+        .summary-actions { grid-template-columns: 1fr; }
+        .summary-actions .btn { width: 100%; min-height: 40px; font-size: .8rem; }
+        #itemtbl { min-width: 760px; table-layout: auto; }
+        #itemtbl th, #itemtbl td { padding: 6px 4px; font-size: .68rem; white-space: normal; word-break: break-word; }
+        #itemtbl th, #itemtbl td { white-space: nowrap; }
+        .table-item-image { width: 32px; height: 32px; }
+        .modal-dialog { margin: .5rem; }
+        #stbl { min-width: 680px; }
+        .sales-items-card .sales-table-wrap { overflow-x: scroll; -webkit-overflow-scrolling: touch; scrollbar-color: #1b2a4a #e4eaf2; scrollbar-width: auto; padding-bottom: 4px; }
+    }
+</style>
+
+<script>
+    $(function () {
+        $(".thhide, .tfhide").hide();
+        $("#myModal").on("shown.bs.modal", function () {
+            SearchloadData();
+        });
+        setInterval(function () {
+            var now = new Date();
+            $("#time").val(now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+        }, 1000);
+    });
+</script>

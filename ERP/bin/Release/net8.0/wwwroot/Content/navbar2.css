@@ -1,0 +1,44 @@
+﻿/* First Navbar Customizations */
+.navbar2 {
+    background-color: #7AE2CF; /* Red background */
+}
+
+    .navbar2 .navbar-brand {
+        color: #000000; /* White text for navbar brand */
+        font-weight: bold;
+        font-family: Verdana;
+    }
+
+    .navbar2 .navbar-nav .nav-link {
+        color: #000000; /* White text for links */
+    }
+
+        .navbar2 .navbar-nav .nav-link:hover,
+        .navbar2 .navbar-nav .nav-link:focus {
+            background-color: #000000;
+            border-radius: 5px 5px;
+            color: #7AE2CF;
+            /* Golden text on hover */
+        }
+
+    .navbar2 .navbar-nav .nav-item.dropdown .dropdown-menu {
+        background-color: #7AE2CF; /* Same background for dropdown */
+        border-color: #7AE2CF; /* Border color for dropdown */
+    }
+
+    .navbar2 .navbar-nav .nav-item.dropdown .dropdown-item {
+        color: #000000; /* White text for dropdown items */
+    }
+
+        .navbar2 .navbar-nav .nav-item.dropdown .dropdown-item:hover {
+            background-color: #000000; /* Golden background on hover */
+            color: #7AE2CF; /* Dark red text on hover */
+        }
+
+    .navbar2 .navbar-toggler {
+        border-color: #000000; /* White border for toggler icon */
+    }
+
+    .navbar2 .navbar-toggler-icon {
+        background-color: #000000; /* White toggler icon */
+    }

@@ -1,0 +1,347 @@
+﻿@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+    //Layout = "~/Views/Shared/_UserLayout.cshtml";
+    //int processid = ViewBag.pid;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<div class="dash-shell">
+    <h1>Sublimation Invoice Application</h1>
+    <section>
+        <div class="row g-3">
+            <div class="col-12 col-md-4 col-lg-3">
+                <div class="dash-menu">
+
+                    <section class="menu-block">
+                        <a class="menu-trigger"
+                           data-bs-toggle="collapse"
+                           href="#collapseZero"
+                           role="button"
+                           aria-expanded="false"
+                           aria-controls="collapseZero">
+                            <span><i class="fa-solid fa-book fa-fw me-2"></i>Accounts Setup</span>
+                            <i class="fa-solid fa-chevron-down chevron"></i>
+                        </a>
+                        <div class="collapse" id="collapseZero">
+                            <div class="menu-sublist">
+                                <a class="menu-sublink" href="@Url.Action("Head", "Accounts")"><i class="fa fa-arrow-right"></i> 1st Head Account</a>
+                                <a class="menu-sublink" href="@Url.Action("SubHeadList", "Accounts")"><i class="fa fa-arrow-right"></i> 2nd Head Account</a>
+                                <a class="menu-sublink" href="@Url.Action("SubSubHeadList", "Accounts")"><i class="fa fa-arrow-right"></i> 3rd Head Account</a>
+                                <a class="menu-sublink" href="@Url.Action("SubSubSubHeadList", "Accounts")"><i class="fa fa-arrow-right"></i> 4th Head Account</a>
+                                <a class="menu-sublink" href="@Url.Action("AccountReg", "Accounts", new {Status=1})"><i class="fa fa-arrow-right"></i> Account Register</a>
+                                <a class="menu-sublink" href="@Url.Action("Voucher", "Voucher", new {head="Journal Voucher",type="JV"})"><i class="fa fa-arrow-right"></i> Journal Voucher (JV)</a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="menu-block">
+                        <a class="menu-trigger"
+                           data-bs-toggle="collapse"
+                           href="#collapseSales"
+                           role="button"
+                           aria-expanded="false"
+                           aria-controls="collapseSales">
+                            <span><i class="fa-solid fa-cart-shopping fa-fw me-2"></i>Sales</span>
+                            <i class="fa-solid fa-chevron-down chevron"></i>
+                        </a>
+                        <div class="collapse" id="collapseSales">
+                            <div class="menu-sublist">
+                                <a class="menu-sublink" href="@Url.Action("Index", "SubSaleInvoice")">
+                                    <i class="fa fa-arrow-right"></i> New Sales Invoice
+                                </a>
+                                <a class="menu-sublink" href="@Url.Action("Sublimation", "SubSaleInvoice")">
+                                    <i class="fa fa-arrow-right"></i> Sublimation Sale
+                                </a>
+                                <a class="menu-sublink" href="@Url.Action("List", "SubSaleInvoice")">
+                                    <i class="fa fa-arrow-right"></i> Sales Invoice List
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="menu-block">
+                        <a class="menu-trigger"
+                           data-bs-toggle="collapse"
+                           href="#collapseTwo"
+                           role="button"
+                           aria-expanded="false"
+                           aria-controls="collapseTwo">
+                            <span><i class="fa-solid fa-users fa-fw me-2"></i>User Profile Setup</span>
+                            <i class="fa-solid fa-chevron-down chevron"></i>
+                        </a>
+                        <div class="collapse" id="collapseTwo">
+                            <div class="menu-sublist">
+                                <a class="menu-sublink" href="@Url.Action("Userlist", "Admin")"><i class="fa fa-arrow-right"></i> Profile List</a>
+                                <a class="menu-sublink" href="@Url.Action("AddUser", "Admin")"><i class="fa fa-arrow-right"></i> Add New Profile</a>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+
+            <div class="col-12 col-md-8 col-lg-9">
+                <div class="mro">
+
+                    <a href="/Accounts/AccountRegList" class="tile">
+                        <div class="tile-icon"><img src="~/images/plus-sign.png" class="img-fluid" /></div>
+                        <p>New Account</p>
+                    </a>
+
+                    
+
+                    <a href="/Admin/Category" class="tile">
+                        <div class="tile-icon"><img src="~/images/list.png" class="img-fluid" /></div>
+                        <p>Add Category</p>
+                    </a>
+
+                    
+
+                    <a href="/Voucher/PaymentVoucher" class="tile">
+                        <div class="tile-icon"><img src="~/images/payment.png" class="img-fluid" /></div>
+                        <p>Cash P / R</p>
+                    </a>
+
+                    <a href="@Url.Action("Voucher", "Voucher", new {head="Journal Voucher",type="JV"})" class="tile">
+                        <div class="tile-icon"><img src="~/images/accounting.png" class="img-fluid" /></div>
+                        <p>Jeneral Voucher</p>
+                    </a>
+
+                    <a href="@Url.Action("Index", "TblProfile")" class="tile">
+                        <div class="tile-icon"><img src="~/Images/id-card.png" class="img-fluid" /></div>
+                        <p>Company Profile</p>
+                    </a>
+
+                    <a href="@Url.Action("Logoutd", "Admin")" class="tile tile-danger">
+                        <div class="tile-icon"><img src="~/images/shutdown.png" class="img-fluid" /></div>
+                        <p>Logout</p>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    :root {
+        --dash-primary: #1A2A80;
+        --dash-primary-dark: #234C6A;
+        --dash-bg: #F4F7FB;
+        --dash-border: #e7ecf3;
+        --dash-danger: #d64545;
+    }
+
+    .dash-shell {
+        background-color: var(--dash-bg);
+        border-radius: 16px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.06), 0 6px 20px 0 rgba(0, 0, 0, 0.06);
+        padding: 18px;
+    }
+
+    .dash-shell h1 {
+        margin: 0 0 14px 0;
+        padding: 12px 18px;
+        text-align: center;
+        font-size: 1.45rem;
+        font-weight: 800;
+        letter-spacing: 0.3px;
+        color: #fff;
+        background: linear-gradient(135deg, var(--dash-primary) 0%, var(--dash-primary-dark) 100%);
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(20, 30, 60, 0.10);
+    }
+
+    /* ---------- Sidebar menu ---------- */
+    .dash-menu {
+        margin-top: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .menu-block {
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(20, 30, 60, 0.06);
+    }
+
+    .menu-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #fff;
+        background: linear-gradient(135deg, var(--dash-primary) 0%, var(--dash-primary-dark) 100%);
+        text-decoration: none;
+        transition: filter 0.15s ease;
+    }
+
+        .menu-trigger:hover,
+        .menu-trigger:focus {
+            color: #fff;
+            filter: brightness(1.08);
+            text-decoration: none;
+        }
+
+        .menu-trigger .chevron {
+            transition: transform 0.2s ease;
+            font-size: 0.8rem;
+        }
+
+        .menu-trigger[aria-expanded="true"] .chevron {
+            transform: rotate(180deg);
+        }
+
+    .menu-sublist {
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
+        gap: 4px;
+    }
+
+    .menu-sublink {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        color: var(--dash-primary);
+        text-decoration: none;
+        transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+        .menu-sublink:hover {
+            background: #eef1ff;
+            color: var(--dash-primary);
+            transform: translateX(2px);
+            text-decoration: none;
+        }
+
+        .menu-sublink i {
+            font-size: 0.75rem;
+            opacity: 0.75;
+        }
+
+    /* ---------- Tile grid ---------- */
+    .mro {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+
+    .tile {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 20px 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        text-decoration: none;
+        color: #1c1c1c;
+        box-shadow: 0 2px 6px rgba(20, 30, 60, 0.08);
+        transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+        .tile:hover,
+        .tile:focus {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 10px 22px rgba(20, 30, 60, 0.16);
+            color: #1c1c1c;
+            text-decoration: none;
+            background: #fbfcff;
+        }
+
+        .tile:active {
+            transform: scale(0.97);
+        }
+
+    .tile-icon {
+        width: 46px;
+        height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+    }
+
+        .tile-icon img {
+            max-width: 40px;
+            max-height: 40px;
+            width: 100%;
+            object-fit: contain;
+        }
+
+    .tile p {
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.25;
+    }
+
+    .tile-danger p {
+        color: var(--dash-danger);
+    }
+
+    /* ---------- Responsive breakpoints ---------- */
+    @@media (max-width: 992px) {
+        .mro {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .dash-shell {
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .dash-shell h1 {
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            text-align: center;
+        }
+
+        .mro {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .tile {
+            padding: 14px 8px;
+            border-radius: 12px;
+        }
+
+        .tile-icon {
+            width: 38px;
+            height: 38px;
+        }
+
+            .tile-icon img {
+                max-width: 32px;
+                max-height: 32px;
+            }
+
+        .tile p {
+            font-size: 0.78rem;
+        }
+
+        .menu-trigger {
+            font-size: 0.88rem;
+            padding: 12px 14px;
+        }
+
+        .menu-sublink {
+            font-size: 0.85rem;
+        }
+    }
+</style>

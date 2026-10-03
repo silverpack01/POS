@@ -1,0 +1,66 @@
+﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+
+    <!-- Bootstrap CSS (CDN version) -->
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Optional: Add your custom CSS -->
+    <link href="~/Content/navbar.css" rel="stylesheet" />
+    <!-- jQuery must load before page-specific scripts. The project ships 3.7.1. -->
+    <script src="~/Scripts/jquery-3.7.1.min.js"></script>
+</head>
+<body style="font-family:Verdana, Geneva, Tahoma, sans-serif">
+    <!-- Second Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar1" style="background-color: #234C6A">
+            <div class="container">
+                <a class="navbar-brand" href="@Url.Action("Home", "Admin")">@ERPSolution.Controllers.TblProfileController.Name()</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav2" aria-controls="navbarNav2" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="fa fa-home" style="font-size:24px;color:white"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav1">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="@Url.Action("Index", "Admin")" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-chart-diagram"></i> Accounts Settings
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="@Url.Action("Head", "Accounts")"><i class="fas fa-sign-out-alt"></i> 1st Head Accounts</a>
+                                <a class="dropdown-item" href="@Url.Action("SubHeadList", "Accounts")"><i class="fas fa-sign-out-alt"></i> 2nd Head Accounts</a>
+                                <a class="dropdown-item" href="@Url.Action("SubSubHeadList", "Accounts")"><i class="fas fa-sign-out-alt"></i> 3rd Head Accounts</a>
+                                <a class="dropdown-item" href="@Url.Action("SubSubSubHeadList", "Accounts")"><i class="fas fa-sign-out-alt"></i> 4th Head Accounts</a>
+                                <a class="dropdown-item" href="@Url.Action("AccountReg", "Accounts")"><i class="fas fa-sign-out-alt"></i> Account Register</a>
+                                <a class="dropdown-item" href="@Url.Action("UserList", "Admin")"><i class="fas fa-sign-out-alt"></i> System User</a>
+                                <a class="dropdown-item" href="@Url.Action("Logout", "Admin")"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </div>
+                        </li>
+                        @*<li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-bank"></i> Material Setup
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="@Url.Action("Category", "Product")"><i class="fas fa-sign-out-alt"></i> Add Category</a>
+                                <a class="dropdown-item" href="@Url.Action("SubCategory", "Product")"><i class="fas fa-sign-out-alt"></i> Add Company</a>
+                                <a class="dropdown-item" href="@Url.Action("AddProduct", "Product")"><i class="fas fa-sign-out-alt"></i> Add Product</a>
+
+                            </div>
+                        </li>*@
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main role="main" class="container-fluid">
+        @RenderBody()
+    </main>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <!-- Your custom JavaScript -->
+    <script src="~/Scripts/navbar.js"></script>
+    <script src="~/Scripts/navbar2.js"></script>
+
+</body>
+</html>

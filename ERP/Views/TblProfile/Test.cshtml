@@ -1,0 +1,447 @@
+﻿@{
+    ViewBag.Title = "CR Payment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<div id="loaderOverlay">
+    <div class="spinner"></div>
+    <div class="loader-text">Please wait...</div>
+</div>
+
+<style>
+    :root {
+        --brand-teal: #077A7D;
+        --brand-teal-dark: #055759;
+        --panel-bg: #ffffff;
+        --page-bg: #f4f7f8;
+        --border-soft: #e3e9ea;
+    }
+
+    /* ---------- Loader ---------- */
+    #loaderOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.55);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .spinner {
+        width: 56px;
+        height: 56px;
+        border: 6px solid rgba(255,255,255,0.25);
+        border-top: 6px solid #ffffff;
+        border-radius: 50%;
+        animation: spin 0.9s linear infinite;
+    }
+
+    .loader-text {
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* ---------- Page shell / cards ---------- */
+    .cr-panel {
+        background: var(--panel-bg);
+        border-radius: 14px;
+        box-shadow: 0 2px 10px rgba(20, 30, 40, 0.08);
+        padding: 16px !important;
+        border: 1px solid var(--border-soft);
+    }
+
+        .cr-panel label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--brand-teal-dark);
+            margin-bottom: 4px;
+        }
+
+    .disclass.form-control,
+    .disclass.form-control-lg {
+        border-radius: 10px;
+        border: 1.5px solid var(--border-soft);
+        transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+        .disclass.form-control:focus,
+        .disclass.form-control-lg:focus {
+            border-color: var(--brand-teal);
+            box-shadow: 0 0 0 3px rgba(7, 122, 125, 0.15);
+        }
+
+    .ss {
+        border: 2px solid var(--brand-teal);
+        background-color: #f9f9f9;
+        border-radius: 10px;
+    }
+
+    /* ---------- Table ---------- */
+    #itemtbl, #edittbl, #printtbl {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+        #itemtbl thead th, #printtbl thead th {
+            background-color: var(--brand-teal) !important;
+            color: #fff !important;
+            font-size: 0.85rem;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+        }
+
+        #itemtbl tbody tr:hover {
+            background-color: #eef7f7;
+        }
+
+    /* ---------- Action / save buttons ---------- */
+    .SaveBtns {
+        margin-top: 14px;
+        padding: 10px 4px;
+        position: sticky;
+        bottom: 0;
+        background: var(--page-bg);
+        z-index: 5;
+    }
+
+        .SaveBtns .btn {
+            border-radius: 10px;
+            font-weight: 700;
+            padding: 12px 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.12s ease;
+        }
+
+            .SaveBtns .btn:active {
+                transform: scale(0.96);
+            }
+
+    #saveBtn {
+        border-radius: 10px;
+        font-weight: 700;
+        background-color: var(--brand-teal) !important;
+        color: #fff !important;
+        box-shadow: 0 2px 8px rgba(7, 122, 125, 0.3);
+    }
+
+    /* ---------- Modals ---------- */
+    .modal-header {
+        background: var(--brand-teal);
+        color: #fff;
+    }
+
+        .modal-header .btn-close {
+            filter: invert(1) brightness(2);
+        }
+
+    .modal-content {
+        border-radius: 14px;
+        overflow: hidden;
+        border: none;
+    }
+
+    /* ---------- Responsive ---------- */
+    @@media (max-width: 600px) {
+        table tr th {
+            font-size: 12px;
+        }
+
+        table tbody tr td {
+            font-size: 11px;
+        }
+
+        .cr-panel {
+            padding: 12px !important;
+            border-radius: 10px;
+        }
+
+        .SaveBtns .btn,
+        #saveBtn {
+            font-size: 0.85rem;
+            padding: 12px 6px;
+        }
+
+        .modal-dialog {
+            margin: 0.5rem;
+        }
+    }
+</style>
+
+<section>
+    <div class="container-fluid cr-panel">
+        <div class="row">
+            <div class="col-md-4 col-6 mt-2">
+                <label class="d-block d-md-none">Date</label>
+                <input type="text" id="date" class="form-control form-control-lg disclass" />
+            </div>
+            <div class="col-md-4 col-6 mt-2">
+                <label class="d-block d-md-none">Type</label>
+                <select class="form-control disclass" id="type" onchange="addshow()">
+                    <option value="">Type</option>
+                    <option value="CPV">Cash Payment</option>
+                    <option value="CRV">Cash Received</option>
+                    <option value="BPV">Bank Payment</option>
+                    <option value="BRV">Bank Received</option>
+                </select>
+            </div>
+            <div class="col-md-4 col-12 mt-2">
+                <input type="hidden" id="bankac" />
+                <input type="text" id="bankname" class="form-control form-control-lg disclass" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mt-2">
+    <input type="hidden" id="AccCode" /><input type="hidden" id="AccName" />
+    <input type="hidden" id="HeadCode" /><input type="hidden" id="HeadName" />
+    <input type="hidden" id="SubHeadCode" /><input type="hidden" id="SubHeadName" />
+    <input type="hidden" id="SubSubHeadCode" /><input type="hidden" id="SubSubHeadName" />
+    <input type="hidden" id="SubSubSubHeadCode" /><input type="hidden" id="SubSubSubHeadName" />
+    <div class="container-fluid cr-panel">
+        <div class="row">
+            <div class="col-md-6 col-6">
+                <label>Select Account</label>
+                <input type="text" id="acccode" class="form-control form-control-lg disclass" placeholder="Account Register" />
+            </div>
+            <div class="col-md-2 col-6">
+                <label>Amount</label>
+                <input type="text" id="Amt" class="form-control ss disclass opclass" />
+            </div>
+            <div class="col-md-3 col-6">
+                <label>Enter Narration</label>
+                <input type="text" id="nar" class="form-control ss disclass opclass" />
+            </div>
+            <div class="col-md-1 col-6">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <button class="btn btn-primary form-control disclass opclass" style="margin-top:0" onclick="saveDataInTable()"><i class="fa fa-save"></i></button>
+            </div>
+            <div class="col-md-12 col-12 mt-2">
+                <input type="text" id="bal" class="form-control ss disclass opclass" style="color:red;font-weight:bold" readonly />
+            </div>
+        </div>
+        <br />
+    </div>
+</section>
+
+<section class="mt-2">
+    <div class="table-responsive">
+        <table class="table table-sm table-hover" id="itemtbl">
+            <thead>
+                <tr class="">
+                    <th style="background-color: #077A7D;color:white">****</th>
+                    <th style="display:none;">HeadCode</th>
+                    <th style="display:none;">HeadName</th>
+                    <th style="display:none;">SubHeadCode</th>
+                    <th style="display:none;">SubHeadName</th>
+                    <th style="display:none;">SubSubHeadCode</th>
+                    <th style="display:none;">SubSubHeadName</th>
+                    <th style="display:none;">Acc Code</th>
+                    <th style="background-color: #077A7D;color:white">Account</th>
+                    <th style="background-color: #077A7D; color: white">Narration</th>
+                    <th colspan="2" style="background-color: #077A7D; color: white">Amount</th>
+                    <th style="display:none;">RefCode</th>
+                    <th style="display:none;">RefName</th>
+                    <th style="display:none;">Date</th>
+                </tr>
+            </thead>
+            <tbody class="body"></tbody>
+            <tbody class="tbodyl"></tbody>
+            <tfoot>
+                <tr style="border-top: 2px solid #808080; border-bottom: 2px solid #808080">
+                    <td style="background-color:#d1cdcd4d" colspan="3">--------</td>
+                    <td style="background-color: #d1cdcd4d;" colspan="2"><span style="font-weight:bold; font-size: 16px" class="totalCredit">0</span></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</section>
+
+<div class="SaveBtns">
+    <div class="row g-2">
+        <div class="col-md-3 col-3">
+            <a href="#" class="btn btn-info form-control" onclick="enableFun()"><i class="fa fa-plus"></i></a>
+        </div>
+        <div class="col-md-3 col-3">
+            <a href="#" class="btn btn-primary form-control" onclick="printVoucher()"><i class="fa fa-print"></i></a>
+        </div>
+        <div class="col-md-3 col-3">
+            <a href="#" class="btn btn-dark form-control" onclick="loadDatad()"><i class="fa fa-search"></i></a>
+        </div>
+        <div class="col-md-3 col-3">
+            <input type="submit" id="saveBtn" class="btn form-control disclass opclass" value="Post All" style="background-color: #077A7D; color: white;" />
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<script src="~/JsFiles/paymentJs.js?v=@DateTime.Now.Ticks"></script>
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script>
+    //editopen()
+
+</script>
+
+<div class="modal fade" id="editModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><b>Edit Voucher</b></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-5 col-5">
+                        <input type="text" id="efdate" class="form-control" />
+                    </div>
+                    <div class="col-md-5 col-5">
+                        <input type="text" id="eldate" class="form-control" />
+                    </div>
+                    <div class="col-md-2 col-2">
+                        <button class="btn btn-sm btn-primary" onclick="searchData()"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+                <section class="mt-2">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered" id="edittbl">
+                            <thead>
+                                <tr>
+                                    <th class="bg-primary text-light">Date</th>
+                                    <th class="bg-primary text-light">V-ID</th>
+                                    <th class="bg-primary text-light">Type</th>
+                                    <th class="bg-primary text-light">NOT</th>
+                                    <th class="bg-primary text-light">X</th>
+                                </tr>
+                            </thead>
+                            <tbody class="editbody"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*print voucher modal*@
+
+<div class="modal fade" id="printModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><b>Print Voucher</b></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="report-container" id="myDiv">
+                    <div>
+                        <center>
+                            <b style="font-size:24px "><b>@ERPSolution.Controllers.TblProfileController.Name()</b></b><br />
+                            <b style="font-size: 15px "><b>@ERPSolution.Controllers.TblProfileController.Mobile() / @ERPSolution.Controllers.TblProfileController.Phone()</b></b><br />
+                            <b style="font-size: 15px"><b>@ERPSolution.Controllers.TblProfileController.Address() </b></b><br />
+                            <b style="font-size: 12px"><b>Voucher Date: <span id="tdate"></span></b></b><br />
+                            <b style="font-size: 12px"><b>Voucher Type: <span id="tcate"></span></b></b><br />
+                        </center>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover" id="printtbl">
+                            <thead>
+                                <tr class="">
+                                    <th style="background-color: #077A7D;color:white">****</th>
+                                    <th style="background-color: #077A7D;color:white">Account</th>
+                                    <th style="background-color: #077A7D; color: white">Narration</th>
+                                    <th colspan="2" style="background-color: #077A7D; color: white">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody class="printbody"></tbody>
+                            <tfoot>
+                                <tr style="border-top: 2px solid #808080; border-bottom: 2px solid #808080">
+                                    <td style="background-color:#d1cdcd4d" colspan="3">--------</td>
+                                    <td style="background-color: #d1cdcd4d;" colspan="2"><span style="font-weight:bold; font-size: 16px" class="totalCredit">0</span></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" onclick="generatePDF()" class="btn btn-success w-20"><i class="fab fa-whatsapp fa-lg"></i></a>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+
+    async function generatePDF() {
+        $("#loaderOverlay").show();
+        $("body").css("pointer-events", "none");
+        const { jsPDF } = window.jspdf;
+
+        let div = document.getElementById("myDiv");
+
+        // Convert HTML to canvas
+        let canvas = await html2canvas(div, { scale: 2 });
+        let imgData = canvas.toDataURL("image/png");
+
+        let pdf = new jsPDF("p", "mm", "a4");
+
+        let pageWidth = pdf.internal.pageSize.getWidth();
+        let pageHeight = pdf.internal.pageSize.getHeight();
+
+        let imgWidth = pageWidth;
+        let imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        // First page
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        // Extra pages
+        while (heightLeft > 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+
+        pdf.save("Ledger.pdf");
+        $("#loaderOverlay").hide();
+        $("body").css("pointer-events", "auto");
+    };
+
+
+</script>

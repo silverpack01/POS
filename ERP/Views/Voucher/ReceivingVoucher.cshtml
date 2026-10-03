@@ -1,0 +1,204 @@
+@{
+    ViewBag.Title = "Receiving Voucher";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<div class="container-fluid receiving-page">
+    <div class="receiving-heading">
+        <div>
+            <h3>Receiving Voucher</h3>
+            <p>Record a receiving entry between the selected two accounts.</p>
+        </div>
+        <a href="@Url.Action("Finance", "Admin")" class="btn btn-secondary">Back</a>
+    </div>
+
+    <section class="receiving-card" aria-label="Receiving voucher form">
+        <div id="formMessage" class="alert d-none" role="alert"></div>
+        <form id="receivingVoucherForm">
+            <div class="row g-3">
+                <div class="col-md-4 col-6">
+                    <label for="voucherDate" class="form-label">Date</label>
+                    <input id="Date" type="text" class="form-control" required />
+                </div>
+                <div class="col-md-4 col-6">
+                    <label for="cashBankAccountCode" class="form-label">Cash / Bank Account</label>
+                    <input id="cashBankAccountCode" type="text" class="form-control" required />
+                </div>
+                <div class="col-md-4 col-6">
+                    <label for="accountCode" class="form-label">Select Account</label>
+                    <input id="accountCode" type="text" class="form-control" required />
+                </div>
+                <div class="col-md-4 col-6">
+                    <label for="amount" class="form-label">Amount</label>
+                    <input id="amount" type="number" min="0.01" step="0.01" class="form-control" placeholder="0.00" required />
+                </div>
+                <div class="col-md-6 col-6">
+                    <label for="narration" class="form-label">Narration</label>
+                    <input id="narration" type="text" maxlength="500" class="form-control" placeholder="Optional details" />
+                </div>
+                <div class="col-md-2 col-6 d-flex align-items-end">
+                    <button id="saveButton" type="submit" class="btn btn-primary w-100">Save</button>
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <section class="receiving-card receiving-list-card" aria-label="Receiving voucher records">
+        <div class="receiving-list-heading">
+            <h5>Receiving Voucher Records</h5>
+            <button id="refreshButton" type="button" class="btn btn-outline-secondary btn-sm">Refresh</button>
+        </div>
+        <div class="row g-2 mb-3 receiving-filters">
+            <div class="col-md-4 col-6">
+                <label for="recordAccountCode" class="form-label">Account</label>
+                <input id="recordAccountCode" type="text" class="form-control" placeholder="All accounts" />
+            </div>
+            <div class="col-md-3 col-6">
+                <label for="fromDate" class="form-label">From Date</label>
+                <input id="fromDate" type="text" class="form-control" />
+            </div>
+            <div class="col-md-3 col-6">
+                <label for="toDate" class="form-label">To Date</label>
+                <input id="toDate" type="text" class="form-control" />
+            </div>
+            <div class="col-md-2 col-6 d-flex align-items-end">
+                <button id="searchRecordsButton" type="button" class="btn btn-primary w-100">Search</button>
+            </div>
+        </div>
+        <div class="table-responsive receiving-table-wrap">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Cash / Bank</th>
+                    <th>Account</th>
+                    <th class="text-end">Amount</th>
+                    <th>Narration</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+                </thead>
+                <tbody id="voucherRows">
+                <tr><td colspan="6" class="text-center text-muted py-4">Loading records...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" id="receivingPrintModal" tabindex="-1" aria-labelledby="receivingPrintModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content receiving-print-modal">
+            <div class="modal-header">
+                <h5 class="modal-title" id="receivingPrintModalTitle">Receiving Voucher</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="receivingPrintArea" class="receiving-print-area">
+                    <div class="receiving-print-company">
+                        <div class="receiving-print-company-name">@ERPSolution.Controllers.TblProfileController.Name()</div>
+                        <div>@ERPSolution.Controllers.TblProfileController.Mobile() / @ERPSolution.Controllers.TblProfileController.Phone()</div>
+                        <div>@ERPSolution.Controllers.TblProfileController.Address()</div> 
+                    </div>
+                    <div class="receiving-print-title">RECEIVING VOUCHER</div>
+                    <div class="receiving-print-info">
+                        <span>Date: <strong id="printVoucherDate"></strong></span>
+                        <span>Voucher #: <strong id="printVoucherId"></strong></span>
+                    </div>
+                    <table class="receiving-print-table">
+                        <thead>
+                            <tr>
+                                <th>Cash / Bank</th>
+                                <th>Account</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="printCashBank"></td>
+                                <td id="printAccount"></td>
+                                <td id="printAmount" class="text-end"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="receiving-print-narration"><strong>Narration:</strong> <span id="printNarration"></span></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" onclick="printReceivingVoucherReceipt()"><i class="fa fa-print"></i> Print</button>
+                <button type="button" class="btn btn-primary" onclick="shareReceivingVoucherPdf()"><i class="fa fa-share-alt"></i> Share PDF</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script src="~/JsFiles/rcVoucherJs.js?v=@DateTime.Now.Ticks"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+    .receiving-page { padding-top: 18px; padding-bottom: 24px; max-width: 1440px; }
+    .receiving-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .receiving-heading h3 { margin: 0; color: #1b2a4a; font-weight: 800; }
+    .receiving-heading p { margin: 4px 0 0; color: #6b7280; font-size: .9rem; }
+    .receiving-card { margin-bottom: 18px; padding: 20px; border: 1px solid #d9e1ec; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(27, 42, 74, .05); }
+    .receiving-card .form-label { color: #243b5a; font-weight: 700; }
+    .receiving-card .form-control, .receiving-card .form-select { min-height: 42px; }
+    .receiving-card .btn-primary { min-height: 42px; background: #234c6a; border-color: #234c6a; }
+    .receiving-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .receiving-list-heading h5 { margin: 0; color: #1b2a4a; font-weight: 800; }
+    .receiving-table-wrap { max-height: 360px; overflow-y: auto; border: 1px solid #e4eaf2; border-radius: 8px; }
+    .receiving-table-wrap thead th { position: sticky; top: 0; z-index: 1; padding: 11px 14px; background: #1b2a4a; color: #fff; font-size: .85rem; white-space: nowrap; }
+    .receiving-table-wrap tbody td { padding: 11px 14px; }
+    .receiving-print-modal .modal-header { border-bottom-color: #d9e1ec; }
+    .receiving-print-modal .modal-title { color: #1b2a4a; font-weight: 800; }
+    .receiving-print-area { border: 1px solid #d9e1ec; border-radius: 8px; overflow: hidden; color: #1b2a4a; }
+    .receiving-print-company { padding: 18px 14px 12px; text-align: center; font-size: .82rem; font-weight: 600; }
+    .receiving-print-company-name { font-size: 1.35rem; font-weight: 800; letter-spacing: .4px; }
+    .receiving-print-title { padding: 8px 14px; background: #1b2a4a; color: #fff; text-align: center; font-size: .9rem; font-weight: 800; letter-spacing: .5px; }
+    .receiving-print-info { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; border-bottom: 1px dashed #b8c5d6; font-size: .8rem; }
+    .receiving-print-table { width: 100%; margin: 0; border-collapse: collapse; font-size: .82rem; }
+    .receiving-print-table th { padding: 9px 10px; background: #edf2f7; color: #1b2a4a; text-align: left; }
+    .receiving-print-table td { padding: 10px; border-top: 1px solid #e2e8f0; }
+    .receiving-print-narration { min-height: 48px; padding: 11px 14px; border-top: 1px solid #e2e8f0; font-size: .82rem; }
+    @@media (max-width: 600px) {
+        .receiving-page { padding: 8px; }
+        .receiving-heading { align-items: flex-start; margin-bottom: 8px; }
+        .receiving-heading h3 { font-size: 1.1rem; }
+        .receiving-heading p { display: none; }
+        .receiving-card { margin-bottom: 8px; padding: 10px; border-radius: 10px; }
+        .receiving-card .row { --bs-gutter-x: .4rem; --bs-gutter-y: .4rem; }
+        .receiving-card .form-label { margin-bottom: 3px; font-size: .8rem; }
+        .receiving-card .form-control,
+        .receiving-card .form-select,
+        .receiving-card .k-input,
+        .receiving-card .k-input-inner { min-height: 34px; font-size: .85rem; }
+        .receiving-card .k-multicolumncombobox { width: 100% !important; }
+        .receiving-card .btn-primary { min-height: 34px; font-size: .85rem; }
+        .receiving-list-card { padding: 8px; }
+        .receiving-list-heading { margin-bottom: 6px; }
+        .receiving-list-heading h5 { font-size: .9rem; }
+        .receiving-list-heading .btn { min-height: 32px; padding: 3px 8px; font-size: .75rem; }
+        .receiving-filters { --bs-gutter-x: .4rem; --bs-gutter-y: .4rem; margin-bottom: 6px !important; }
+        .receiving-filters .form-label { margin-bottom: 3px; font-size: .8rem; }
+        .receiving-filters .form-control,
+        .receiving-filters .k-input,
+        .receiving-filters .k-input-inner,
+        .receiving-filters .btn { min-height: 34px; font-size: .8rem; }
+        .receiving-table-wrap { max-height: 450px; }
+        .receiving-table-wrap thead th,
+        .receiving-table-wrap tbody td { padding: 6px 8px; font-size: .75rem; }
+        .receiving-print-company { padding: 14px 10px 10px; }
+        .receiving-print-company-name { font-size: 1.15rem; }
+        .receiving-print-info { padding: 8px 10px; font-size: .72rem; }
+        .receiving-print-table { font-size: .72rem; }
+        .receiving-print-table th,
+        .receiving-print-table td { padding: 7px 6px; }
+        .receiving-print-narration { padding: 8px 10px; font-size: .75rem; }
+    }
+</style>

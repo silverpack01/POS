@@ -1,0 +1,379 @@
+﻿@model ERPSolution.Models.TblUser
+@{
+    ViewBag.Title = "LOGIN HERE";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#1b2a4a" />
+    <title>@ViewBag.Title</title>
+
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --brand-teal: #2f6fed;
+            --brand-mint: #3a5a94;
+            --brand-mint-dark: #1b2a4a;
+            --brand-dark: #16233d;
+            --text-muted: #6b7c85;
+            --danger: #e02424;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            overscroll-behavior-y: none;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(160deg, var(--brand-mint) 0%, var(--brand-mint-dark) 45%, var(--brand-teal) 100%);
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: calc(24px + var(--safe-top)) 16px calc(24px + var(--safe-bottom));
+            position: relative;
+            overflow-x: hidden;
+        }
+
+            /* Soft decorative blobs for depth, app-like ambience */
+            body::before, body::after {
+                content: "";
+                position: fixed;
+                border-radius: 50%;
+                filter: blur(60px);
+                opacity: 0.35;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            body::before {
+                width: 260px;
+                height: 260px;
+                background: #ffffff;
+                top: -80px;
+                left: -60px;
+            }
+
+            body::after {
+                width: 320px;
+                height: 320px;
+                background: var(--brand-teal);
+                bottom: -100px;
+                right: -80px;
+            }
+
+        .auth-wrapper {
+            width: 100%;
+            max-width: 440px;
+            position: relative;
+            z-index: 1;
+            animation: rise 0.5s ease-out;
+        }
+
+        @@keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .brand-block {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+
+        .brand-icon-circle {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.92);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            box-shadow: 0 10px 24px rgba(6, 32, 43, 0.18);
+        }
+
+            .brand-icon-circle img {
+                max-width: 92px;
+                width: 100%;
+            }
+
+        .brand-title {
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            margin: 0;
+        }
+
+        .brand-subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .auth-card {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            border: none;
+            box-shadow: 0 20px 45px rgba(6, 32, 43, 0.22);
+            overflow: hidden;
+        }
+
+        .auth-card-header {
+            background: transparent;
+            border: none;
+            padding: 30px 30px 6px;
+            text-align: center;
+        }
+
+            .auth-card-header h2 {
+                color: var(--brand-teal);
+                font-weight: 700;
+                font-size: 1.35rem;
+                margin: 0;
+            }
+
+            .auth-card-header p {
+                color: var(--text-muted);
+                font-size: 0.88rem;
+                margin: 6px 0 0;
+            }
+
+        .auth-card-body {
+            padding: 22px 30px 10px;
+        }
+
+        .field-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--brand-dark);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .input-group {
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: 0 0 0 1.5px #e3e9eb inset;
+            transition: box-shadow 0.2s ease;
+            margin-bottom: 18px;
+        }
+
+            .input-group:focus-within {
+                box-shadow: 0 0 0 2px var(--brand-teal) inset;
+            }
+
+        .input-group-text {
+            background: #f5f8f8;
+            border: none;
+            color: var(--brand-teal);
+            width: 46px;
+            justify-content: center;
+        }
+
+        .form-control {
+            border: none;
+            padding: 0.85rem 0.9rem;
+            font-size: 1rem;
+            background: #fbfdfd;
+        }
+
+            .form-control:focus {
+                box-shadow: none;
+                background: #ffffff;
+            }
+
+        .toggle-eye {
+            cursor: pointer;
+            background: #f5f8f8;
+        }
+
+        .btn-login {
+            width: 100%;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.95rem;
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: 0.3px;
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--brand-teal) 0%, var(--brand-mint-dark) 100%);
+            box-shadow: 0 10px 22px rgba(27, 42, 74, 0.35);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+            .btn-login:active {
+                transform: scale(0.98);
+                box-shadow: 0 6px 14px rgba(27, 42, 74, 0.35);
+            }
+
+        .auth-card-footer {
+            background: transparent;
+            border: none;
+            padding: 4px 30px 26px;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        .error-msg {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--danger);
+        }
+
+        .app-footer-note {
+            text-align: center;
+            color: rgba(255,255,255,0.85);
+            font-size: 0.78rem;
+            margin-top: 18px;
+        }
+
+        /* Mobile app-like feel */
+        @@media (max-width: 576px) {
+            body {
+                padding: calc(16px + var(--safe-top)) 12px calc(16px + var(--safe-bottom));
+                align-items: flex-start;
+            }
+
+            .auth-wrapper {
+                margin-top: 8vh;
+            }
+
+            .brand-icon-circle {
+                width: 72px;
+                height: 72px;
+            }
+
+            .brand-title {
+                font-size: 1.35rem;
+            }
+
+            .auth-card {
+                border-radius: 22px;
+            }
+
+            .auth-card-header {
+                padding: 24px 22px 4px;
+            }
+
+            .auth-card-body {
+                padding: 18px 22px 6px;
+            }
+
+            .auth-card-footer {
+                padding: 4px 22px 22px;
+            }
+
+            .form-control {
+                font-size: 16px; /* prevents iOS zoom on focus */
+            }
+        }
+
+        /* Subtle press feedback for touch, app-like */
+        .input-group-text:active {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="brand-block">
+            @*<div class="brand-icon-circle">
+                <img src="~/Images/dotposlogo.jpeg" alt="Poultry Logo" />
+            </div>*@
+            <h1 class="brand-title">@ERPSolution.Controllers.TblProfileController.Name()</h1>
+            <div class="brand-subtitle">Sign in to manage your farm</div>
+        </div>
+
+        @using (Html.BeginForm("Login", "Admin", FormMethod.Post, new { autocomplete = "off" }))
+        {
+            <div class="auth-card">
+                <div class="auth-card-header">
+                    <h2>Enter Your Identity</h2>
+                    <p>Please log in with your credentials</p>
+                </div>
+                <div class="auth-card-body">
+                    <label class="field-label" for="Name">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <svg viewBox="0 0 448 512" width="16" height="16" fill="currentColor"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z"/></svg>
+                        </span>
+                        @Html.TextBoxFor(x => x.Name, new { @class = "form-control", placeholder = "Enter username", autocomplete = "username" })
+                    </div>
+
+                    <label class="field-label" for="Password">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <svg viewBox="0 0 512 512" width="16" height="16" fill="currentColor"><path d="M336 0c-97.2 0-176 78.8-176 176c0 15.5 2 30.6 5.8 45L9.4 377.4C3.4 383.4 0 391.5 0 400L0 464c0 26.5 21.5 48 48 48l64 0c26.5 0 48-21.5 48-48l0-32 32 0c26.5 0 48-21.5 48-48l0-32 32 0c12.7 0 24.9-5.1 33.9-14.1l25.4-25.4c14.4 3.8 29.5 5.8 45 5.8c97.2 0 176-78.8 176-176S433.2 0 336 0zM376 96a40 40 0 1 1 0 80 40 40 0 1 1 0-80z"/></svg>
+                        </span>
+                        @Html.PasswordFor(x => x.Password, new { @class = "form-control", placeholder = "Enter password", autocomplete = "current-password" })
+                        <span class="input-group-text toggle-eye" onclick="togglePassword()">
+                            <svg id="eyeIcon" viewBox="0 0 640 512" width="16" height="16" fill="currentColor">
+                                <path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c8.4-19.3 10.6-41.4 4.8-63.3c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-8.7 6.4-6.1 11.6c4.5 9 7 19.2 7 30c0 5.5-.7 10.9-1.9 16.1l-100.1-68.3zM406.2 416.7C371.7 434.1 335.8 448 320 448c-79.5 0-144-64.5-144-144c0-24.5 6.1-47.5 16.9-67.7L406.2 416.7z"/>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <button type="submit" class="btn-login mt-2 mb-1">
+                        <svg viewBox="0 0 512 512" width="16" height="16" fill="currentColor" style="margin-right:8px;vertical-align:-2px;"><path d="M217.9 105.9L340.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L217.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-70.1L32 312c-17.7 0-32-14.3-32-32l0-48c0-17.7 14.3-32 32-32l128 0 0-70.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM352 416l64 0c17.7 0 32-14.3 32-32l0-256c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l64 0c53 0 96 43 96 96l0 256c0 53-43 96-96 96l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>Log In
+                    </button>
+                </div>
+                <div class="auth-card-footer">
+                    @if (!string.IsNullOrEmpty(ViewBag.msg))
+                    {
+                        <span class="error-msg">@ViewBag.msg</span>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="app-footer-note">&copy; @DateTime.Now.Year Poultry ERP &mdash; All rights reserved</div>
+    </div>
+
+    <script src="~/Scripts/jquery-3.7.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <script>
+        var eyeOpenPath = "M572.5 241.4C518.3 135.6 411.2 64 288 64S57.7 135.6 3.5 241.4a32.4 32.4 0 0 0 0 29.2C57.7 376.4 164.8 448 288 448s230.3-71.6 284.5-177.4a32.4 32.4 0 0 0 0-29.2zM288 400a144 144 0 1 1 0-288 144 144 0 1 1 0 288zm0-240a95.3 95.3 0 0 0 -25.3 3.8 47.9 47.9 0 0 1 -66.9 66.9A96 96 0 1 0 288 160z";
+        var eyeSlashPath = "M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c8.4-19.3 10.6-41.4 4.8-63.3c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-8.7 6.4-6.1 11.6c4.5 9 7 19.2 7 30c0 5.5-.7 10.9-1.9 16.1l-100.1-68.3zM406.2 416.7C371.7 434.1 335.8 448 320 448c-79.5 0-144-64.5-144-144c0-24.5 6.1-47.5 16.9-67.7L406.2 416.7z";
+
+        function togglePassword() {
+            var x = document.getElementById("Password");
+            var svg = document.getElementById("eyeIcon");
+            var path = svg.querySelector("path");
+            if (x.type === "password") {
+                x.type = "text";
+                svg.setAttribute("viewBox", "0 0 576 512");
+                path.setAttribute("d", eyeOpenPath);
+            } else {
+                x.type = "password";
+                svg.setAttribute("viewBox", "0 0 640 512");
+                path.setAttribute("d", eyeSlashPath);
+            }
+        }
+    </script>
+</body>
+</html>

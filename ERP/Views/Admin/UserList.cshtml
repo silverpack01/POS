@@ -1,0 +1,46 @@
+﻿@model IEnumerable<ERPSolution.Models.TblUser>
+@{
+    ViewBag.Title = "UserList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="">
+    <section>
+        <div class="row mt-1">
+            <div class="col-md-9 col-9">
+                <p style="font-weight: bold; font-size: 18px; color: #234C6A ">Create & Update Profile</p>
+            </div>
+            <div class="col-md-3 col-3">
+                <a href="@Url.Action("AddUser", "Admin")" style="background-color: #234C6A; color: white; " class="btn btn-sm form-control">+</a>
+            </div>
+
+        </div>
+    </section>
+    <section>
+        <div class="col-md-12">
+            <p style="text-align:center;color:#808080;font-weight:bold">@ViewBag.msg</p>
+        </div>
+        <table class="table table-sm table-bordered table-hover">
+            <thead>
+                <tr style="background-color: #234C6A " class="text-white">
+                    <td style="background-color: #234C6A " class="text-white"><b>UserName</b></td>
+                    <td style="background-color: #234C6A " class="text-white"><b>Password</b></td>
+                    <td style="background-color: #234C6A " class="text-white"><b>XXX</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var i in Model)
+                {
+                    <tr>
+                        <td>@i.Name</td>
+                        <td>@i.Password</td>
+                        <td>
+                            <a href="@Url.Action("DeleteUser", "Admin", new { Id = i.Id })" class="btn btn-sm btn-danger">D</a>
+                            <a href="@Url.Action("AddUser", "Admin", new { Id = i.Id })" class="btn btn-sm btn-warning">E</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+</div>
+

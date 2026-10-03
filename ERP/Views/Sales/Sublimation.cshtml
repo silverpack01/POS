@@ -1,0 +1,384 @@
+@{
+    ViewBag.Title = "Sublimation Sale";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<div class="sublimation-page" id="sublimation-page">
+    <input type="hidden" id="sublimation-id" /><input type="hidden" id="sublimation-saleid" />
+    <div id="receipt-profile" hidden
+         data-name="@ERPSolution.Controllers.TblProfileController.Name()"
+         data-address="@ERPSolution.Controllers.TblProfileController.Address()"
+         data-mobile="@ERPSolution.Controllers.TblProfileController.Mobile()"
+         data-phone="@ERPSolution.Controllers.TblProfileController.Phone()"></div>
+    <div class="sublimation-heading">Sublimation Sale Invoice</div>
+
+    <div class="sales-layout">
+        <main class="sales-main">
+            <section class="sales-card sales-entry-card">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label class="form-label" for="sublimation-customer">Customer Account</label>
+                        <input class="form-control" id="sublimation-customer" placeholder="Select Customer" autocomplete="off" />
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label" for="sublimation-invoice-date">Invoice Date</label>
+                        <input class="form-control" id="sublimation-invoice-date" type="text" />
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label" for="sublimation-delivery-date">Delivery Date</label>
+                        <input class="form-control" id="sublimation-delivery-date" type="text" />
+                    </div>
+                </div>
+            </section>
+
+            <section class="sales-card sales-item-entry">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-8">
+                        <label class="form-label" for="sublimation-item">Item Description</label>
+                        <input class="form-control" id="sublimation-item" placeholder="Enter sublimation item description" autocomplete="off" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="sublimation-image">Item Image</label>
+                        <div class="image-picker-row"><input class="form-control" id="sublimation-image" type="file" accept="image/*" capture="environment" /><img id="sublimation-image-preview" class="item-image-preview" alt="Selected item preview" /></div>
+                    </div>
+                    <div class="col-md-3 col-6"><label class="form-label" for="sublimation-qty">Quantity</label><input class="form-control" id="sublimation-qty" type="number" min="0" step="0.01" placeholder="0.00" /></div>
+                    <div class="col-md-3 col-6"><label class="form-label" for="sublimation-inchx">Height</label><input class="form-control" id="sublimation-inchx" type="number" min="0" step="0.01" placeholder="0.00" /></div>
+                    <div class="col-md-3 col-6"><label class="form-label" for="sublimation-inchy">Width</label><input class="form-control" id="sublimation-inchy" type="number" min="0" step="0.01" placeholder="0.00" /></div>
+                    <div class="col-md-3 col-6"><label class="form-label" for="sublimation-rate">Rate</label><div class="input-group"><input class="form-control" id="sublimation-rate" type="number" min="0" step="0.01" placeholder="0.00" /><button type="button" class="btn btn-success" title="Save Invoice" onclick="saveSublimationInvoice(); return false;"><i class="fa fa-check"></i></button></div></div>
+                </div>
+            </section>
+
+            <section class="sales-card sales-items-card">
+                <div class="table-responsive sales-table-wrap">
+                    <table class="table align-middle mb-0 sublimation-item-table" id="sublimation-item-table">
+                        <thead><tr><th>Item Description</th><th>Qty</th><th>Height</th><th>Width</th><th>Total Feet</th><th>Rate</th><th class="text-end">Amount</th><th>Image</th><th class="sales-action-column">Action</th></tr></thead>
+                        <tbody id="sublimation-item-body"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <aside class="sales-summary">
+            <section class="sales-card sales-summary-card">
+                <h3>Sublimation Calculations</h3>
+                <div class="summary-balance-grid">
+                    <div class="summary-balance"><label for="sublimation-previous-balance">Previous Balance</label><input class="form-control" id="sublimation-previous-balance" type="number" value="0.00" readonly /></div>
+                    <div class="summary-balance"><label for="sublimation-previous-rate">Previous Rate</label><input class="form-control" id="sublimation-previous-rate" type="number" value="0.00" readonly /></div>
+                </div>
+                <div class="summary-grid">
+                    <div><label class="form-label" for="sublimation-total-amount">Total Amount</label><input class="form-control" id="sublimation-total-amount" type="text" value="0.00" readonly /></div>
+                    <div><label class="form-label" for="sublimation-total-feet">Total Feet</label><input class="form-control" id="sublimation-total-feet" type="text" value="0.00" readonly /></div>
+                    <div><label class="form-label" for="sublimation-discount">Discount</label><input class="form-control" id="sublimation-discount" type="number" min="0" step="0.01" value="0" /></div>
+                    <div><label class="form-label" for="sublimation-net-total">Net Total</label><input class="form-control" id="sublimation-net-total" type="text" value="0.00" readonly /></div>
+                    <div><label class="form-label" for="sublimation-payment-mode">Payment Account</label><input id="sublimation-payment-mode" class="form-control" placeholder="Select payment account" autocomplete="off" /></div>
+                    <div><label class="form-label" for="sublimation-payment">Advance Payment</label><input class="form-control" id="sublimation-payment" type="number" min="0" step="0.01" value="0" /></div>
+                </div>
+                <div class="summary-actions">
+                    <button type="button" class="btn btn-primary" onclick="printSublimationInvoice()"><i class="fa fa-print"></i> Print Receipt</button>
+                    <button type="button" class="btn btn-danger" id="sublimation-delete"><i class="fa fa-trash"></i> Delete Invoice</button>
+                    <button type="button" class="btn btn-dark" onclick="location.reload()"><i class="fa fa-refresh"></i> Refresh Invoice</button>
+                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#sublimationModal"><i class="fa fa-pencil"></i> Edit Previous Invoices</button>
+                </div>
+            </section>
+        </aside>
+    </div>
+</div>
+
+<div class="modal fade" id="sublimationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Previous Sublimation Sales</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body"><div class="row g-2 mb-3"><div class="col-md-5"><label class="form-label">From Date</label><input type="date" id="sublimation-from-date" class="form-control" /></div><div class="col-md-5"><label class="form-label">To Date</label><input type="date" id="sublimation-to-date" class="form-control" /></div><div class="col-md-2 d-flex align-items-end"><button type="button" id="sublimation-search" class="btn btn-primary w-100">Search</button></div></div>
+            <div class="table-responsive sales-table-wrap"><table class="table table-hover align-middle mb-0"><thead><tr><th>Invoice #</th><th>Date</th><th>Account</th><th>Total</th><th>Discount</th><th>Net Total</th><th>Action</th></tr></thead><tbody id="sublimation-invoice-list"></tbody></table></div>
+        </div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div>
+    </div></div>
+</div>
+
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<link href="~/Content/sales-receipt.css" rel="stylesheet" />
+<link href="~/Font/font-awesome.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+<style>
+    .sublimation-page {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 14px 8px 22px;
+        color: #1b2a4a;
+    }
+
+    .sublimation-heading {
+        margin-bottom: 10px;
+        padding: 8px 10px;
+        border-top: 6px solid #1b2a4a;
+        border-bottom: 6px solid #1b2a4a;
+        color: #1b2a4a;
+        text-align: center;
+        font-size: 1.55rem;
+        font-weight: 800;
+    }
+
+    .sales-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(330px, 1fr);
+        gap: 10px;
+        align-items: start;
+    }
+
+    .sales-card {
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #d9e1ec;
+        border-radius: 9px;
+        background: #fff;
+        box-shadow: 0 2px 7px rgba(27, 42, 74, .05);
+    }
+
+    .sales-card .form-label {
+        margin: 0 0 3px;
+        color: #243b5a;
+        font-weight: 700;
+        font-size: .78rem;
+    }
+
+    .sales-card .form-control,
+    .sales-card .form-select {
+        min-height: 34px;
+        font-size: .82rem;
+        padding: 5px 9px;
+    }
+
+    .sales-entry-card,
+    .sales-item-entry {
+        padding: 8px 10px;
+    }
+
+    .sales-items-card {
+        padding: 7px;
+    }
+
+    .sales-table-wrap {
+        overflow-x: auto;
+        border: 1px solid #e4eaf2;
+        border-radius: 7px;
+    }
+
+    .sales-table-wrap thead th {
+        padding: 8px 9px;
+        background: #1b2a4a;
+        color: #fff;
+        font-size: .72rem;
+        white-space: nowrap;
+    }
+
+    .sales-table-wrap tbody td {
+        padding: 7px 9px;
+        font-size: .77rem;
+    }
+
+    .sales-action-column {
+        width: 60px;
+    }
+
+    .sales-summary-card {
+        padding: 12px;
+    }
+
+    .sales-summary-card h3 {
+        margin: -1px 0 8px;
+        padding: 0 0 7px;
+        border-top: 6px solid #1b2a4a;
+        border-bottom: 6px solid #1b2a4a;
+        color: #1b2a4a;
+        text-align: center;
+        font-size: 1.55rem;
+        font-weight: 800;
+    }
+
+    .summary-balance {
+        margin-bottom: 8px;
+    }
+
+    .summary-balance-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+    }
+
+    .summary-balance label {
+        display: block;
+        margin-bottom: 3px;
+        font-size: .78rem;
+        font-weight: 700;
+    }
+
+    .summary-balance .form-control {
+        background: #edf4ff;
+        font-size: 1.2rem;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+    }
+
+    .summary-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+        margin-top: 10px;
+    }
+
+    .summary-actions .btn {
+        min-height: 36px;
+        padding: 5px 7px;
+        font-size: .75rem;
+    }
+
+    .image-picker-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .image-picker-row .form-control {
+        min-width: 0;
+    }
+
+    .item-image-preview,
+    .table-item-image {
+        border: 1px solid #d9e1ec;
+        border-radius: 5px;
+        object-fit: cover;
+    }
+
+    .item-image-preview {
+        display: none;
+        flex: 0 0 48px;
+        width: 48px;
+        height: 48px;
+    }
+
+    .table-item-image {
+        display: block;
+        width: 42px;
+        height: 42px;
+        margin: 0 auto;
+    }
+
+    .no-item-image {
+        color: #9aa6b2;
+    }
+
+    .sublimation-item-table {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    .sublimation-item-table th,
+    .sublimation-item-table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .sublimation-item-table th:first-child,
+    .sublimation-item-table td:first-child {
+        width: 24%;
+        text-align: left;
+    }
+
+    .sublimation-item-table th:nth-child(8),
+    .sublimation-item-table td:nth-child(8) {
+        width: 62px;
+    }
+
+    .sublimation-item-table th:nth-child(9),
+    .sublimation-item-table td:nth-child(9) {
+        width: 60px;
+    }
+
+    @@media (max-width: 900px) {
+        .sales-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .sublimation-page {
+            width: 100%;
+            padding: 5px;
+            overflow-x: hidden;
+        }
+
+        .sublimation-heading {
+            margin-bottom: 7px;
+            padding: 7px 5px;
+            font-size: 1.15rem;
+        }
+
+        .sales-card {
+            padding: 7px;
+            margin-bottom: 7px;
+        }
+
+        .sales-card .form-control,
+        .sales-card .form-select {
+            min-height: 38px;
+            font-size: .8rem;
+        }
+
+        .sales-summary-card h3 {
+            font-size: 1.15rem;
+            border-top-width: 4px;
+            border-bottom-width: 4px;
+        }
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+            gap: 6px;
+        }
+
+        .summary-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-actions .btn {
+            width: 100%;
+            min-height: 40px;
+            font-size: .8rem;
+        }
+
+        .sublimation-item-table {
+            min-width: 760px;
+            table-layout: auto;
+        }
+
+        .sublimation-item-table th,
+        .sublimation-item-table td {
+            padding: 6px 4px;
+            font-size: .68rem;
+            white-space: nowrap;
+        }
+
+        .table-item-image {
+            width: 32px;
+            height: 32px;
+        }
+    
+        .sales-table-wrap thead th,
+        .sales-table-wrap tbody td {
+            padding: 5px 4px;
+        }
+
+        .sales-items-card .sales-table-wrap {
+            overflow-x: scroll;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-color: #1b2a4a #e4eaf2;
+            scrollbar-width: auto;
+            padding-bottom: 4px;
+        }
+    }
+</style>
+
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script src="~/JsFiles/subSaleJs.js?v=@DateTime.Now.Ticks"></script>

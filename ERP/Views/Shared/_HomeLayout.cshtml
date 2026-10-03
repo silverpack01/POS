@@ -1,0 +1,433 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>DOTPOS</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Font/font-awesome.css" rel="stylesheet" />
+    <style>
+        :root {
+            --navy: #1b2a4a;
+            --navy-dark: #16233d;
+            --accent: #ffffff;
+            --text-light: #ffffff;
+            --text-muted: #ffffff;
+            --active-bg: #ffffff;
+            --active-text: #1b2a4a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: #f2f4f8;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            background: var(--navy);
+            color: var(--text-light);
+            height: 56px;
+            padding: 0 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,.15);
+            position: relative;
+            z-index: 100;
+        }
+
+            .navbar .toggle-btn {
+                background: none;
+                border: none;
+                color: var(--text-light);
+                font-size: 20px;
+                cursor: pointer;
+                padding: 8px 12px;
+                margin-right: 8px;
+            }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: .5px;
+            color: #fff;
+            margin-right: 24px;
+            white-space: nowrap;
+        }
+
+            .brand .logo-box {
+                background: var(--accent);
+                color: var(--navy);
+                width: 28px;
+                height: 28px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: 800;
+            }
+
+        .nav-items {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background .15s ease, color .15s ease;
+            white-space: nowrap;
+        }
+
+            .nav-link:hover {
+                background: rgba(255,255,255,.08);
+                color: #fff;
+            }
+
+        .nav-item.active > .nav-link {
+            background: var(--active-bg);
+            color: var(--active-text);
+            font-weight: 600;
+        }
+
+        .nav-link .icon {
+            font-size: 15px;
+            line-height: 1;
+        }
+
+        .nav-link .caret {
+            font-size: 10px;
+            margin-left: 2px;
+            transition: transform .15s ease;
+        }
+
+        .nav-item.open .caret {
+            transform: rotate(180deg);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            min-width: 290px;
+            background: #fff;
+            color: #25324a;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.18);
+            padding: 6px;
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .nav-item.open .dropdown {
+            display: flex;
+        }
+
+        .dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #374357;
+            font-size: 13.5px;
+        }
+
+            .dropdown a:hover {
+                background: #f0f3fa;
+                color: var(--navy-dark);
+            }
+
+        .dropdown .divider {
+            height: 1px;
+            background: #eceff5;
+            margin: 4px 6px;
+        }
+
+        /* Right side */
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-left: auto;
+        }
+
+        .datetime {
+            font-size: 13px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .user-menu .nav-link {
+            color: var(--text-light);
+            padding: 8px 10px;
+        }
+
+        .user-menu .avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            color: var(--navy);
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .user-menu .dropdown {
+            left: auto;
+            right: 0;
+            min-width: 160px;
+        }
+
+        .logout-btn {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 18px;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+            .logout-btn:hover {
+                background: rgba(255,255,255,.08);
+                color: #fff;
+            }
+
+        /* ============ RESPONSIVE (MOBILE) ============ */
+        @@media (max-width: 900px) {
+
+            .navbar {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 8px 12px;
+            }
+
+            .brand {
+                margin-right: auto;
+            }
+
+            .navbar-right {
+                margin-left: 0;
+                order: 3;
+                width: 100%;
+                justify-content: space-between;
+                padding-top: 8px;
+                display: none;
+            }
+            /* Hide desktop inline nav, show as vertical panel */
+            .nav-items {
+                display: none;
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+                order: 4;
+                gap: 0;
+                padding-top: 8px;
+                border-top: 1px solid rgba(255,255,255,.08);
+                margin-top: 8px;
+            }
+
+            .navbar.menu-open .nav-items,
+            .navbar.menu-open .navbar-right {
+                display: flex;
+            }
+
+            .nav-item {
+                width: 100%;
+            }
+
+            .nav-link {
+                width: 100%;
+                padding: 12px 10px;
+                border-radius: 6px;
+                justify-content: flex-start;
+            }
+
+            .nav-item.active > .nav-link {
+                background: rgba(255,255,255,.12);
+                color: #fff;
+            }
+            /* Dropdown becomes inline accordion instead of floating panel */
+            .dropdown {
+                position: static;
+                box-shadow: none;
+                border-radius: 0;
+                margin: 0 0 4px 12px;
+                padding: 2px 0 2px 8px;
+                border-left: 2px solid rgba(255,255,255,.15);
+                background: transparent;
+                display: none;
+            }
+
+            .nav-item.open .dropdown {
+                display: flex;
+            }
+
+            .dropdown a {
+                color: var(--navy-dark);
+                padding: 9px 10px;
+            }
+
+                .dropdown a:hover {
+                    background: rgba(255,255,255,.06);
+                    color: var(--navy-dark);
+                }
+
+            .dropdown .divider {
+                background: rgba(255,255,255,.1);
+            }
+
+            .user-menu .dropdown {
+                margin-left: 12px;
+            }
+
+            .datetime {
+                font-size: 12px;
+                order: 1;
+            }
+
+            .logout-btn {
+                order: 2;
+            }
+        }
+
+        @@media (min-width: 901px) {
+            .toggle-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tab-body">
+        <nav class="navbar">
+            <button class="toggle-btn">&#9776;</button>
+
+            <div class="brand">
+                DOT-POS
+            </div>
+
+            <div class="nav-items">
+
+                <div class="nav-item">
+                    <a href="/Admin/Home" class="nav-link"><span class=""></span> Dashboard</a>
+                </div>
+
+                <div class="nav-item">
+                    <a href="/Admin/Finance" class="nav-link"><span class=""></span> Finance</a>
+                </div>
+
+                <!-- Dropdown example: Reports-->
+                <div class="nav-item">
+                    <a href="#" class="nav-link js-dropdown-toggle">
+                        <span class=""></span> Product <span class="caret">&#9662;</span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="/Product/AddRack"><span class="fa fa-plus"></span> Add New Rack</a>
+                        <a href="/Product/Unit"><span class="fa fa-plus"></span> Add New Unit</a>
+                        <a href="/Product/Category"><span class="fa fa-plus"></span> Add New Category</a>
+                        <a href="/Product/SubCategory"><span class="fa fa-plus"></span> Add New Sub Category</a>
+                        <a href="/Product/AddProduct"><span class="fa fa-plus"></span> Add New Product</a>
+                        <a href="/Product/ProductAdjustment"><span class="fa fa-plus"></span> Product Adjustment</a>
+                        <a href="/Product/ApplyDiscount"><span class="fa fa-plus"></span> Apply Discount</a>
+                        <a href="/Product/AllStock"><span class="fa fa-plus"></span> Profit % on Item</a>
+                        <div class="divider"></div>
+                        <a href="/Product/StockReport"><span class="fa fa-plus"></span> Stock Report</a>
+                    </div>
+                </div>
+
+                <!-- Dropdown example: Settings -->
+                <div class="nav-item">
+                    <a href="#" class="nav-link js-dropdown-toggle">
+                        <span class="icon">&#9881;</span> Settings <span class="caret">&#9662;</span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="#">General Settings</a>
+                        <a href="#">Company Info</a>
+                        <a href="#">Backup / Restore</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="navbar-right">
+                <div class="datetime">@DateTime.Now.ToString("dd MMMM yyyy") &nbsp; @DateTime.Now.ToString("hh:mm tt")</div>
+
+                <div class="nav-item user-menu">
+                    <a href="#" class="nav-link js-dropdown-toggle">
+                        @*<span class="avatar">A</span>*@ admin <span class="caret">&#9662;</span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="#">My Profile</a>
+                        <a href="#">Change Password</a>
+                        <div class="divider"></div>
+                        <a href="#">Logout</a>
+                    </div>
+                </div>
+
+                <a href="#" class=" btn btn-light" title="Logout">Logout</a>
+            </div>
+        </nav>
+        @RenderBody()
+    </div>
+
+    <script>
+        if (typeof jQuery === 'undefined') {
+            document.write('<script src="@Url.Content("~/Scripts/jquery-3.7.1.min.js")"><\/script>');
+        }
+    </script>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <script>
+        // Hamburger toggle for mobile menu
+        var navbarEl = document.querySelector('.navbar');
+        document.querySelector('.toggle-btn').addEventListener('click', function () {
+            navbarEl.classList.toggle('menu-open');
+        });
+
+        // Toggle dropdown on click, close others, close on outside click
+        document.querySelectorAll('.js-dropdown-toggle').forEach(function (toggle) {
+            toggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                var item = this.closest('.nav-item');
+                var wasOpen = item.classList.contains('open');
+                document.querySelectorAll('.nav-item.open').forEach(function (el) { el.classList.remove('open'); });
+                if (!wasOpen) item.classList.add('open');
+            });
+        });
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.nav-item')) {
+                document.querySelectorAll('.nav-item.open').forEach(function (el) { el.classList.remove('open'); });
+            }
+        });
+    </script>
+
+</body>
+</html>

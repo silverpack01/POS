@@ -1,0 +1,108 @@
+﻿@model IEnumerable<ERPSolution.Models.Tbl_RegisterAccounts>
+@{
+    ViewBag.Title = "AccountRegList";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<style>
+    table thead tr td {
+        font-size: 12px;
+    }
+
+    table tbody tr td {
+        font-size: 12px;
+    }
+
+    @@media (max-width: 600px) {
+
+        .bb {
+            display: none;
+        }
+    }
+</style>
+<div class="container-fluid">
+    <section>
+        <div class="row mt-2">
+            <div class="col-md-10 bb">
+                <p style="font-weight: bold; font-size: 28px; color: #1b2a4a">Register Accounts Record</p>
+            </div>
+            <div class="col-md-1 col-6">
+                <a href="@Url.Action("AccountReg","Accounts", new {Status=""})" class="btn btn-primary form-control">+ New</a>
+            </div>
+            <div class="col-md-1 col-6">
+                <a href="@Url.Action("Home","Admin")" class="btn btn-secondary form-control">Back</a>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="col-md-12">
+            <p style="text-align:center;color:#808080;font-weight:bold">@ViewBag.msg</p>
+        </div>
+        <table class="table table-sm table-bordered table-hover" id="tblacc">
+            <thead>
+                <tr>
+                    <td colspan="4">
+                        <input type="text" onkeyup="accfilterTable()" id="accinput" class="ss form-control form-control-sm" placeholder="Search . . . " />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-white" style="background-color: #1b2a4a"><b>Account Name</b></td>
+                    <td class="text-white bb" style="background-color: #1b2a4a"><b>Mobile</b></td>
+                    <td class="text-white" style="background-color: #1b2a4a"><b>Fix.Rate</b></td>
+                    <td class="text-white" style="background-color: #1b2a4a"><b>XXX</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var i in Model)
+                {
+                    <tr>
+                        <td><i style="font-size:9px;opacity:0.4">@i.HeadName / @i.SubHeadName / @i.SubSubHeadName / @i.SubSubSubHeadName</i><br /> <span style="font-size:11px">@i.AccCode / @i.AccName</span></td>
+                        <td class="bb">@i.Mobile</td>
+                        <td>@i.FixRate</td>
+                        <td>
+                            <a href="@Url.Action("AccountRegDelete", "Accounts", new {Id=i.Id,Acc_Holder=i.AccName})"><span class="badge bg-danger"><i style="font-size:14px" class="fa fa-trash"></i></span></a>
+                            <a href="@Url.Action("AccountReg", "Accounts", new {Id=i.Id,Acc_Holder=i.AccName})"><span class="badge bg-warning"><i style="font-size:14px" class="fa fa-pencil"></i></span></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+</div>
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script>
+    function accfilterTable() {
+
+        let input = document.getElementById("accinput").value.toLowerCase();
+        let table = document.getElementById("tblacc");
+
+        let rows = table.querySelectorAll("tbody tr");
+
+        rows.forEach(row => {
+
+            let cols = row.getElementsByTagName("td");
+            let found = false;
+
+            for (let j = 0; j < cols.length; j++) {
+                if (cols[j].textContent.toLowerCase().includes(input)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            // row show / hide
+            row.style.display = found ? "" : "none";
+        });
+    }
+
+</script>
+
+
+
+

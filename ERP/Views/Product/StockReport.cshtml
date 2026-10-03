@@ -1,0 +1,382 @@
+﻿
+@{
+    ViewBag.Title = "Apply Discount";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+<div class="container-fluid">
+    <section class="mt-2">
+        <div class="row">
+            <div class="col-md-7 col-7 mb-2">
+                <p style="font-weight: bold; font-size: 28px; color: #1b2a4a"> Stock List</p>
+            </div>
+            <div class="col-md-5 col-5">
+                <input type="text" class="form-control sc" id="MyInput2" onkeyup="myFunction2()" placeholder="Search Item" />
+            </div>
+        </div>
+    </section>
+    <section>
+        <table class="table table-sm table-bordered table-hover" id="ptbl">
+            <thead>
+                <tr style="background-color: #077A7D" class="text-white">
+                    <td style="background-color: #2c3e63; width: 19%" class="text-white"><b>Item</b></td>
+                    <td style="background-color: #2c3e63; width: 8%" class="text-white bb"><b>Packing</b></td>
+                    <td style="background-color: #2c3e63; width: 13%" class="text-white bb"><b>Rate</b></td>
+                    <td style="background-color: #2c3e63; width: 10%" class="text-white"><b>Discount</b></td>
+                    <td style="background-color: #2c3e63; width: 10%" class="text-white"><b>SaleRate</b></td>
+                    <td style="background-color: #2c3e63; width: 10%" class="text-white"><b>StockInHand</b></td>
+                    <td style="background-color: #2c3e63; width: 10%" class="text-white"><b>Qty(Pack)</b></td>
+                    <td style="background-color: #2c3e63; width: 10%" class="text-white"><b>Qty(Pcs)</b></td>
+                    <td style="background-color: #2c3e63; width: 10%" class="text-white"><b>Stock.Amt</b></td>
+                </tr>
+            </thead>
+            <tbody class="pbody" id="pp"></tbody>
+            <tbody>
+                <tr class="table-primary">
+                    <td colspan="8" align="right">
+                        <p style="font-size:18px;font-weight:bold">Total Stock Value:</p>
+                    </td>
+                    <td colspan="1" align="left">
+                        <p style="font-size:18px;font-weight:bold"><span id="StockAmtTxt"></span></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="paginationContainer" class="mt-3"></div>
+    </section>
+</div>
+<style>
+    .abb {
+        display: none;
+    }
+
+    .ss {
+        border: 2px solid #077A7D;
+        background-color: #f9f9f9;
+    }
+
+    .sc {
+        border: 2px solid #077A7D;
+        background-color: #f9f9f9;
+    }
+
+    table thead tr td {
+        font-size: 12px;
+    }
+
+    table tbody tr td {
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    @@media (max-width: 600px) {
+        #MyInput2,
+        #rsid,
+        #ssid {
+            font-size: 14px;
+        }
+
+        .sc {
+            width: 100%;
+        }
+
+        .btn {
+            font-size: 14px;
+        }
+
+        p {
+            font-size: 22px !important;
+            text-align: center;
+        }
+
+        .bb {
+            display: none;
+        }
+
+        .abb {
+            display: flex;
+        }
+    }
+</style>
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script>
+    $(document).ready(function () {
+        loadData();
+
+    });
+
+    //####################################################################################################
+    //####################################################################################################
+    var allProducts = [];
+    var filteredProducts = [];   // search ke baad ka data
+    var currentPage = 1;
+    var pageSize = 50;
+
+    function loadData() {
+        var id = 1;
+        var empObj = {
+            Id: id,
+        };
+        $.ajax({
+            url: "/Product/ProductList",
+            data: JSON.stringify(empObj),
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                allProducts = result;
+                filteredProducts = result;   // shuru mein filter empty hota hai
+                currentPage = 1;
+                renderTable();
+                renderPagination();
+            },
+            error: function (errormessage) {
+                //alert(errormessage.responseText);
+            }
+        });
+    }
+
+    function renderTable() {
+        var html = '';
+        $('.pbody').html("");
+
+        var startIndex = (currentPage - 1) * pageSize;
+        var endIndex = startIndex + pageSize;
+        var pageData = filteredProducts.slice(startIndex, endIndex);
+
+        // ==============================
+        // TOTAL OF ALL PAGINATION DATA
+        // ==============================
+        let totalStockAmt = 0;
+
+        $.each(filteredProducts, function (key, item) {
+
+            let stock = parseFloat(item.Stock) || 0;
+            let costRate = parseFloat(item.CostRate) || 0;
+
+            let stockAmt = stock * costRate;
+
+            totalStockAmt += stockAmt;
+        });
+
+        // ==============================
+        // CURRENT PAGE DATA
+        // ==============================
+        $.each(pageData, function (key, item) {
+
+            let stock = parseFloat(item.Stock) || 0;
+            let unitPack = parseFloat(item.UnitPack) || 1;
+            let costRate = parseFloat(item.CostRate) || 0;
+
+            let packUnitQty = stock / unitPack;
+            let stockAmt = stock * costRate;
+
+            html += '<tr>';
+            html += '<td class="aa bb" style="font-weight:bold;display:none">' +item.Id + '</td>';
+            html += '<td class="aa bb" style="font-weight:bold;display:none">' +item.Barcode + '</td>';
+            html += '<td class="aa" style="font-weight:bold;cursor:pointer;" onclick="Ledger(' +item.Id + ')">' +'<i style="opacity:0.4;font-size:11px">' +item.CategoryName + '/' + item.SubCategoryName +'</i><br /> ' +item.BatchNo + ' - ' + item.Item +'</td>';
+            html += '<td class="aa" style="font-weight:bold;font-size:14px">' +'1 x ' + item.UnitPack +'</td>';
+            html += '<td class="aa" style="font-weight:bold;font-size:14px">' +item.CostRate + ' / ' + item.SaleRate +'</td>';
+            html += '<td class="aa" style="font-weight:bold;font-size:14px">' +item.DisAmt + '(' + item.DisPer + '%)' +'</td>';
+            html += '<td class="aa" style="font-weight:bold;font-size:16px">' +item.SaleAmt +'</td>';
+            html += '<td class="aa" style="font-weight:bold;font-size:14px">' +item.StockInHand +'</td>';
+            html += '<td class="aa" style="font-weight:bold;font-size:16px">' +packUnitQty.toFixed(1) +'</td>';
+            html += '<td class="aa" style="font-weight:bold;font-size:16px">' +item.Stock +'</td>';
+            html += '<td class="aa" style="font-weight:bold;font-size:16px">' +stockAmt.toFixed(1) +'</td>';
+            html += '</tr>';
+        });
+
+        $('.pbody').html(html);
+
+        // ALL PAGES TOTAL
+        $('#StockAmtTxt').text(totalStockAmt.toFixed(1));
+    }
+
+    function renderPagination() {
+        var totalRecords = filteredProducts.length;   // filteredProducts use karo
+        var totalPages = Math.ceil(totalRecords / pageSize);
+
+        if (totalRecords <= pageSize) {
+            $('#paginationContainer').html('');
+            return;
+        }
+
+        var isMobile = $(window).width() < 768;
+        var maxVisible = isMobile ? 3 : 10;
+
+        var windowIndex = Math.floor((currentPage - 1) / maxVisible);
+        var startPage = windowIndex * maxVisible + 1;
+        var endPage = Math.min(startPage + maxVisible - 1, totalPages);
+
+        var html = '<ul class="pagination flex-wrap">';
+
+        html += '<li class="page-item ' + (currentPage === 1 ? 'disabled' : '') + '">' +
+            '<a class="page-link" href="#" onclick="goToPage(' + (currentPage - 1) + ');return false;">Prev</a></li>';
+
+        for (var i = startPage; i <= endPage; i++) {
+            html += '<li class="page-item ' + (i === currentPage ? 'active' : '') + '">' +
+                '<a class="page-link" href="#" onclick="goToPage(' + i + ');return false;">' + i + '</a></li>';
+        }
+
+        html += '<li class="page-item ' + (currentPage === totalPages ? 'disabled' : '') + '">' +
+            '<a class="page-link" href="#" onclick="goToPage(' + (currentPage + 1) + ');return false;">Next</a></li>';
+
+        html += '</ul>';
+
+        $('#paginationContainer').html(html);
+    }
+
+    function goToPage(page) {
+        var totalPages = Math.ceil(filteredProducts.length / pageSize);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderTable();
+        renderPagination();
+    }
+
+    $(window).on('resize', function () {
+        if (allProducts.length > 0) {
+            renderPagination();
+        }
+    });
+
+    // ===== Search Function (updated) =====
+    function myFunction2() {
+        var input = document.getElementById("MyInput2");
+        var filter = input.value.toUpperCase().trim();
+
+        if (filter === "") {
+            // Search khali ho to sara data wapas dikhao
+            filteredProducts = allProducts;
+        } else {
+            // Har item ke tamam fields (Item, Barcode, Colour, Size, Rate,
+            // Discount, SaleAmt, Category, Rack, Location, waghera) me se
+            // kisi bhi field me match dhoondein — generic, koi field
+            // hardcode nahi kiya taake naye columns add hone par bhi
+            // search apne aap kaam karta rahe.
+            filteredProducts = allProducts.filter(function (item) {
+                for (var key in item) {
+                    if (!item.hasOwnProperty(key)) continue;
+                    var value = item[key];
+                    if (value === null || value === undefined) continue;
+                    if (String(value).toUpperCase().indexOf(filter) > -1) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+        }
+
+        currentPage = 1;   // search karte hi page 1 pe reset
+        renderTable();
+        renderPagination();
+    }
+</script>
+<script>
+    $("#ptbl").on('click', '.nexta', function () {
+        var currentRow = $(this).closest("tr");
+        var pid = currentRow.find("td:eq(0)").text();
+        let salerate = currentRow.find("td:eq(7)").text();
+        let percent = currentRow.find("td:eq(8)").text();
+
+        if (percent !== null && percent !== 'null') {
+
+            //alert(catename + '------' + catenametwo);
+            var empObj = {
+                Id: pid,
+                SaleRate: salerate,
+                DisPer: percent
+            };
+            //alert(salerate);
+            $.ajax({
+                url: "/Product/ApplyPercentage/",
+                data: JSON.stringify(empObj),
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    loadData()
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        } else {
+            alert("Please Enter Discount In Percentage (%)");
+        }
+    });
+    $("#ptbl").on('click', '.nextb', function () {
+        var currentRow = $(this).closest("tr");
+        var pid = currentRow.find("td:eq(0)").text();
+        let salerate = currentRow.find("td:eq(7)").text();
+        let percent = currentRow.find("td:eq(9)").text();
+
+        if (percent !== null && percent !== 'null') {
+
+            //alert(catename + '------' + catenametwo);
+            var empObj = {
+                Id: pid,
+                SaleRate: salerate,
+                DisAmt: percent
+            };
+            alert(salerate);
+            $.ajax({
+                url: "/Product/ApplyAmount/",
+                data: JSON.stringify(empObj),
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    loadData()
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        } else {
+            alert("Please Enter Discount In Percentage (%)");
+        }
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll(".ss");
+
+        inputs.forEach(input => {
+            input.addEventListener("input", function () {
+                if (input.value.trim() !== "") {
+                    input.style.border = "2px solid green"; // new border
+                } else {
+                    input.style.border = "2px solid #077A7D"; // original
+                }
+            });
+        });
+    });
+
+</script>
+
+<!-- Modal -->
+<div id="myModalid" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-sm">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <p style="text-align:center;font-size:18px;font-weight:bold;color:#b200ff">PRODUCT DETAILS</p>
+            </div>
+            <div class="modal-body xyz">
+                <div class="table-content mt-2">
+                    <table class="table table-sm table-bordered" id="stbl">
+                        <tbody class="pdbody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

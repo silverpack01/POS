@@ -1,0 +1,88 @@
+﻿@model ERPSolution.Models.TblUser
+@{
+    ViewBag.Title = "AddUser";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="">
+    <section>
+        <div class="row mt-1">
+            <div class="col-md-9 col-8">
+                <p style="font-weight: bold; font-size: 18px; color: #234C6A">Create & Update Profile</p>
+            </div>
+            <div class="col-md-3 col-4">
+                <a href="@Url.Action("UserList","Admin")" style="background-color: #234C6A; color: white;" class="btn btn-sm form-control">List</a>
+            </div>
+        </div>
+    </section>
+    <section class="mt-4 shadow p-2">
+        @using (Html.BeginForm("AddUser", "Admin"))
+        {
+
+            <div class="row">
+                <div class="col-md-12">
+                    <p style="text-align:center;color:#808080;font-weight:bold">@ViewBag.msg</p>
+                </div>
+                <div class="col-md-1" style="display:none">
+                    <label><b>User Id:</b></label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    <label><b>User Name:</b></label>
+                    @Html.TextBoxFor(x => x.Name, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    <label><b>Password:</b></label>
+                    @Html.TextBoxFor(x => x.Password, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3" style="display:none">
+                    <label><b>User Mobile:</b></label>
+                    @Html.TextBoxFor(x => x.Phone, new { @class = "form-control" })
+                </div>
+                <div class="col-md-2" style="display:none">
+                    <label><b>Role:</b></label>
+                    @Html.DropDownListFor(x => x.Date, new List<SelectListItem>
+              {
+                new SelectListItem{ Text="Select Role", Value = "" },
+                new SelectListItem{ Text="Admin", Value = "Admin" },
+                new SelectListItem{ Text="User", Value = "User" },
+                }, new { @class = "form-control" })
+                </div>
+                <div class="col-md-4" style="display:none">
+                    <label><b>User CNIC:</b></label>
+                    @Html.TextBoxFor(x => x.CNIC, new { @class = "form-control" })
+                </div>
+                <div class="col-md-4" style="display:none">
+                    <label><b>User Email:</b></label>
+                    @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
+                </div>
+                <div class="col-md-4" style="display:none">
+                    <label><b>Status:</b></label>
+                    @Html.DropDownListFor(x => x.Status, new List<SelectListItem>
+              {
+                new SelectListItem{ Text="Select Status", Value = "" },
+                new SelectListItem{ Text="Active", Value = "1" },
+                new SelectListItem{ Text="InActive", Value = "0" },
+                }, new { @class = "form-control" })
+                </div>
+                <div class="col-md-2" style="display:none">
+                    <label><b>Select Process:</b></label>
+                    @Html.TextBoxFor(x => x.ProcessName, new { @class = "form-control form-control-lg" })
+                    @Html.HiddenFor(x => x.ProcessId, new { @class = "form-control" })
+                </div>
+                <div class="col-md-8" style="display:none">
+                    <label><b>User Address:</b></label>
+                    @Html.TextBoxFor(x => x.Address, new { @class = "form-control form-control-lg" })
+                </div>
+                <div class="col-md-4">
+                    <input type="submit" class="btn form-control" value="Save & Update" style="background-color: #234C6A; color: white; margin-top: 24px" />
+                </div>
+            </div>
+        }
+    </section>
+</div>
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+

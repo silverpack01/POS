@@ -1,0 +1,140 @@
+@model IEnumerable<ERPSolution.Models.Tbl_SubSaleInvoice>
+@{
+    ViewBag.Title = "Sales Invoice List";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<div class="sales-list-page">
+    <div class="sales-page-heading">
+        <div>
+            <h3>Sales Invoice List</h3>
+            <p>Search and review saved sales invoices.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-primary" href="@Url.Action("Index", "SubSaleInvoice")"><i class="fa fa-plus"></i> New Invoice</a>
+            <a class="btn btn-secondary" href="@Url.Action("Home", "Admin")">Back</a>
+        </div>
+    </div>
+
+    <section class="sales-card sales-filter-card" aria-label="Sales invoice filters">
+        <form method="get" action="@Url.Action("List", "SubSaleInvoice")" class="row g-3 align-items-end">
+            <div class="col-md-3 col-6">
+                <label class="form-label" for="dt1">From Date</label>
+                <input type="text" class="form-control" id="dt1" name="dt1" value="@Context.Request.Query["dt1"]" placeholder="From date" autocomplete="off" />
+            </div>
+            <div class="col-md-3 col-6">
+                <label class="form-label" for="dt2">To Date</label>
+                <input type="text" class="form-control" id="dt2" name="dt2" value="@Context.Request.Query["dt2"]" placeholder="To date" autocomplete="off" />
+            </div>
+            <div class="col-md-2 col-6"><button type="submit" class="btn btn-primary w-100"><i class="fa fa-search"></i> Search</button></div>
+            <div class="col-md-2 col-6"><button type="button" class="btn btn-outline-secondary w-100" onclick="printSalesList()"><i class="fa fa-print"></i> Print</button></div>
+        </form>
+    </section>
+
+    <section class="sales-card" id="sales-print-area" aria-label="Sales invoice records">
+        <div class="sales-list-heading">
+            <div class="sales-section-title mb-0"><i class="fa fa-list"></i><span>Saved Invoices</span></div>
+            <span class="sales-count">@Model.Count() invoice(s)</span>
+        </div>
+        <div class="table-responsive sales-table-wrap">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr><th>Invoice #</th><th>Date</th><th>Sale Type</th><th>Account</th><th class="text-end">Total</th><th class="text-end">Discount</th><th class="text-end">Net Total</th><th class="text-end">Payment</th><th>Payment Account</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var invoice in Model)
+                    {
+                        <tr>
+                            <td>@invoice.SaleID</td>
+                            <td>@(invoice.Date?.ToString("yyyy-MM-dd") ?? "-") <small class="text-muted">@invoice.ITime</small></td>
+                            <td>@invoice.SaleType</td>
+                            <td>@invoice.CustomerName</td>
+                            <td class="text-end">@((invoice.TotalAmount ?? 0).ToString("N2"))</td>
+                            <td class="text-end">@((invoice.Discount ?? 0).ToString("N2"))</td>
+                            <td class="text-end">@((invoice.NetTotal ?? 0).ToString("N2"))</td>
+                            <td class="text-end">@((invoice.Payment ?? 0).ToString("N2"))</td>
+                            <td>@(string.IsNullOrWhiteSpace(invoice.PayMode) ? "-" : invoice.PayMode)</td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="9" class="text-center text-muted py-4">No sales invoices found for the selected dates.</td></tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4">Total</th>
+                        <th class="text-end">@Model.Sum(x => x.TotalAmount ?? 0).ToString("N2")</th>
+                        <th class="text-end">@Model.Sum(x => x.Discount ?? 0).ToString("N2")</th>
+                        <th class="text-end">@Model.Sum(x => x.NetTotal ?? 0).ToString("N2")</th>
+                        <th class="text-end">@Model.Sum(x => x.Payment ?? 0).ToString("N2")</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </section>
+</div>
+
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<link href="~/Font/font-awesome.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script>
+    $(function () {
+        $("#dt1, #dt2").kendoDatePicker({ format: "yyyy-MM-dd" });
+    });
+
+    function printSalesList() {
+        var printArea = document.getElementById("sales-print-area");
+        var original = document.body.innerHTML;
+        document.body.innerHTML = printArea.outerHTML;
+        window.print();
+        document.body.innerHTML = original;
+        window.location.reload();
+    }
+</script>
+
+<style>
+    .sales-list-page { max-width: 1450px; margin: 0 auto; padding: 18px 12px 30px; color: #1b2a4a; overflow-x: hidden; }
+    .sales-page-heading, .sales-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .sales-page-heading { margin-bottom: 18px; }
+    .sales-page-heading h3 { margin: 0; font-weight: 800; }
+    .sales-page-heading p { margin: 4px 0 0; color: #6b7280; font-size: .9rem; }
+    .sales-card { padding: 18px; margin-bottom: 16px; border: 1px solid #d9e1ec; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(27,42,74,.05); }
+    .sales-card .form-label { margin-bottom: 5px; color: #243b5a; font-weight: 700; }.sales-card .form-control { min-height: 40px; }
+    .sales-filter-card .k-datepicker { display: flex; width: 100%; min-height: 40px; border: 1px solid #d9dfe7; border-radius: 5px; background: #fff; overflow: hidden; }
+    .sales-filter-card .k-datepicker .k-input-inner { min-height: 38px; padding: 8px 12px; border: 0; color: #243b5a; font-size: .95rem; }
+    .sales-filter-card .k-datepicker .k-input-button { flex: 0 0 45px; min-height: 38px; border: 0; border-left: 1px solid #e0e0e0; border-radius: 0; background: #f1f1f1; color: #243b5a; }
+    .sales-filter-card .k-datepicker .k-input-button:hover { background: #e8e8e8; }
+    .sales-section-title { display: flex; align-items: center; gap: 9px; color: #1b2a4a; font-weight: 800; }.sales-section-title i { color: #2f6fed; }
+    .sales-table-wrap { overflow-x: auto; border: 1px solid #e4eaf2; border-radius: 8px; }.sales-table-wrap thead th { padding: 11px 14px; background: #1b2a4a; color: #fff; font-size: .82rem; white-space: nowrap; }.sales-table-wrap tbody td, .sales-table-wrap tfoot th { padding: 11px 14px; font-size: .84rem; }.sales-table-wrap tfoot { border-top: 2px solid #d9e1ec; }.sales-count { color: #6b7280; font-size: .82rem; }
+    @@media (max-width: 600px) {
+        .sales-list-page { padding: 10px 6px 20px; }
+        .sales-page-heading { align-items: flex-start; flex-direction: column; gap: 10px; }
+        .sales-page-heading > div:last-child { width: 100%; display: grid !important; grid-template-columns: 1fr 1fr; }
+        .sales-page-heading h3 { font-size: 1.15rem; }
+        .sales-page-heading p { display: none; }
+        .sales-page-heading .btn { padding: 8px; font-size: .75rem; }
+        .sales-card { padding: 10px; }
+        .sales-filter-card form > div { width: 100%; }
+        .sales-table-wrap thead th, .sales-table-wrap tbody td, .sales-table-wrap tfoot th { padding: 7px 6px; font-size: .7rem; }
+        .sales-list-page #sales-print-area .sales-list-heading { align-items: flex-start; }
+        /* The invoice list has many columns, so keep its rows readable and scroll this table horizontally. */
+        .sales-list-page #sales-print-area .sales-table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-color: #1b2a4a #e4eaf2;
+        }
+        .sales-list-page #sales-print-area table {
+            min-width: 900px;
+            table-layout: auto;
+        }
+        .sales-list-page #sales-print-area table th,
+        .sales-list-page #sales-print-area table td {
+            white-space: nowrap;
+            word-break: normal;
+        }
+    }
+</style>

@@ -1,0 +1,131 @@
+﻿@model ERPSolution.Models.Tbl_RegisterAccounts
+@{
+    ViewBag.Title = "AccountReg";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+    @@media (max-width: 600px) {
+
+        .bb {
+            display: none;
+        }
+    }
+    .ss {
+        border: 2px solid #d10f0fb2;
+        background-color: #f9f9f9;
+    }
+</style>
+<div class="mt-1 container-fluid">
+    <section class="mt-2">
+        <div class="row">
+            <div class="col-md-6 bb">
+                <p style="font-weight: bold; font-size: 28px; color: #1b2a4a">Register Account</p>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="@Url.Action("AccountRegList","Accounts")" class="btn btn-primary form-control">Account List</a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="@Url.Action("Home","Admin")" class="btn btn-secondary form-control">Back</a>
+            </div>
+        </div>
+    </section>
+    <section class="mt-4 shadow p-2">
+        @using (Html.BeginForm("AccountReg", "Accounts"))
+        {
+            @Html.HiddenFor(x => x.Id, new { @id = "recordId", @class = "form-control" })
+            @Html.HiddenFor(x => x.HeadCode, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.HeadName, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.SubHeadCode, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.SubHeadName, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.SubSubHeadCode, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.SubSubHeadName, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.SubSubSubHeadCode, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.Status, new { @class = "form-control" })
+            <div class="row">
+                <div class="col-md-12">
+                    <p style="text-align:center;color:#808080;font-weight:bold">@ViewBag.msg</p>
+                </div>
+                <div class="col-md-2 col-6">
+                    <label><b>Account Code:</b></label>
+                    @Html.TextBoxFor(x => x.AccCode, new { @class = "form-control" })
+                </div>
+                <div class="col-md-4 col-6">
+                    <label><b>Select Date:</b></label>
+                    @Html.TextBoxFor(x => x.Date, "{0:dd-MM-yyyy}", new { @class = "form-control form-control-lg" })
+                </div>
+                <div class="col-md-6 col-12">
+                    <label><b>Select Account Title:</b></label>
+                    @Html.TextBoxFor(x => x.SubSubSubHeadName, new { @class = "form-control form-control-lg" })
+                </div>
+
+                <div class="col-md-6 col-12">
+                    <label><b>Enter @ViewBag.name Name:</b></label>
+                    @Html.TextBoxFor(x => x.AccName, new { @class = "form-control ss" })
+                </div>
+                <div class="col-md-3 col-12">
+                    <label><b>Enter Fix Rate:</b></label>
+                    @Html.TextBoxFor(x => x.FixRate, new { @class = "form-control ss" })
+                </div>
+                <div class="col-md-3 bb">
+                    <label><b>Enter Account Limit:</b></label>
+                    @Html.TextBoxFor(x => x.AccountLimit, new { @class = "form-control ss" })
+                </div>
+                <div class="col-md-9 col-12">
+                    <label><b>Enter Mobile No:</b></label>
+                    @Html.TextBoxFor(x => x.Mobile, new { @class = "form-control ss" })
+                </div>
+                <div class="col-md-3">
+                    <input type="submit" class="btn form-control" value="Save & Update" style="margin-top: 24px; background-color: #1b2a4a; color: white;" />
+                </div>
+            </div>
+        }
+    </section>
+
+</div>
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#Date").kendoDatePicker({ value: new Date(), format: "dd-MM-yyyy"});
+        var dataSource1 = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "/Accounts/getSubSubSubHead",
+                    dataType: "json"
+                }
+            }
+        });
+        $("#SubSubSubHeadName").kendoMultiColumnComboBox({
+            dataTextField: "SubSubSubHeadName",
+            dataValueField: "SubSubSubHeadName",
+            height: 500,
+            columns: [
+                { field: "SubSubSubHeadName", title: "Account Name", width: 350 }
+            ],
+            filter: "contains",
+            filterFields: ["SubSubSubHeadName"],
+            dataSource: dataSource1,
+            change: function () {
+                // Get the selected item from the combo box
+                var selectedItem = this.dataItem(this.selectedIndex);
+
+                if (selectedItem) {
+                    //  $("#Current Data column name").val(selectedItem.Previous Data column name);
+                    $("#HeadCode").val(selectedItem.HeadCode);
+                    $("#HeadName").val(selectedItem.HeadName);
+                    $("#SubHeadCode").val(selectedItem.SubHeadCode);
+                    $("#SubHeadName").val(selectedItem.SubHeadName);
+                    $("#SubSubHeadCode").val(selectedItem.SubSubHeadCode);
+                    $("#SubSubHeadName").val(selectedItem.SubSubHeadName);
+                    $("#SubSubSubHeadCode").val(selectedItem.SubSubSubHeadCode);
+                }
+            }
+        });
+    });
+</script>
+
+

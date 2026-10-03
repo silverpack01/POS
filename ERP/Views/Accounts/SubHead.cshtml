@@ -1,0 +1,88 @@
+﻿@model ERPSolution.Models.TblSubHead
+@{
+    ViewBag.Title = "SaveSubHead";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+<div class="container">
+    <section class="mt-2">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <p style="font-weight: bold; font-size: 28px; color: #1b2a4a">2nd Head Account</p>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="@Url.Action("SubHeadList","Accounts")" class="btn btn-primary form-control">2nd Head List</a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="@Url.Action("Home","Admin")" class="btn btn-secondary form-control">Back</a>
+            </div>
+        </div>
+    </section>
+    <section class="mt-4 shadow p-2">
+        @using (Html.BeginForm("SubHead", "Accounts"))
+        {
+            @Html.HiddenFor(x => x.Id, new { @id = "recordId", @class = "form-control" })
+            @Html.HiddenFor(x => x.HeadName, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.Debit, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.credit, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.Balance, new { @class = "form-control" })
+            <div class="row">
+                <div class="col-md-12">
+                    <p style="text-align:center;color:#808080;font-weight:bold">@ViewBag.msg</p>
+                </div>
+                <div class="col-md-2">
+                    <label><b>Sub Head Code:</b></label>
+                    @Html.TextBoxFor(x => x.sub_Head_Code, new { @class = "form-control" })
+                </div>
+                <div class="col-md-4">
+                    <label><b>Select Account Head:</b></label>
+                    @Html.TextBoxFor(x => x.HeadCode, new { @class = "form-control form-control-lg" })
+                </div>
+
+                <div class="col-md-4">
+                    <label><b>Sub Head Name:</b></label>
+                    @Html.TextBoxFor(x => x.sub_Head_Name, new { @class = "form-control" })
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" class="btn form-control"  value="Save & Update" style="background-color: #1b2a4a; color: white; margin-top: 24px" />
+                </div>
+            </div>
+        }
+    </section>
+</div>
+
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var dataSource1 = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "/Accounts/getHead",
+                    dataType: "json"
+                }
+            }
+        });
+
+        $("#HeadCode").kendoMultiColumnComboBox({
+            dataTextField: "Head_Name",
+            dataValueField: "Head_Code",
+            height: 450,
+            columns: [
+                { field: "Head_Name", title: "Head Name", width: 350 }
+            ],
+            filter: "contains",
+            filterFields: ["Head_Code", "Head_Name"],
+            dataSource: dataSource1,
+            change: function () {
+                var selectedItem = this.dataItem(this.selectedIndex);
+                if (selectedItem) {
+                    //  $("#Current Data column name").val(selectedItem.Previous Data column name);
+                    $("#HeadName").val(selectedItem.Head_Name);
+                }
+            }
+        });
+    });
+</script>

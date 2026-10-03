@@ -1,0 +1,94 @@
+﻿@model IEnumerable<ERPSolution.Models.TblSubSubSubHead>
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<style>
+    .btn-danger:hover,
+    .btn-warning:hover {
+        transform: scale(1.1);
+        transition: 0.2s ease-in-out;
+    }
+</style>
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <h3 class=" fw-bold" style="color: #1b2a4a">4th Head List</h3>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="@Url.Action("SubSubSubHead","Accounts")"
+               class="btn btn-primary form-control">Add 4th Head</a>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="@Url.Action("Home","Admin")"
+               class="btn btn-secondary form-control">Back</a>
+        </div>
+    </div>
+
+    <p class="text-center text-muted fw-bold">@ViewBag.msg</p>
+
+    @foreach (var group in Model.GroupBy(x => new
+    {
+        x.HeadCode,
+        x.HeadName,
+        x.SubHeadCode,
+        x.SubHeadName,
+        x.SubSubHeadCode,
+        x.SubSubHeadName
+    }))
+    {
+        <div class="card shadow-sm mb-3 border-0">
+            <div class="card-body">
+
+                <!-- Parent Hierarchy -->
+                <div class="mb-3">
+                    <div><strong>1st:</strong> @group.Key.HeadCode / @group.Key.HeadName</div>
+                    <div class="ms-3"><strong>2nd:</strong> @group.Key.SubHeadCode / @group.Key.SubHeadName</div>
+                    <div class="ms-4"><strong>3rd:</strong> @group.Key.SubSubHeadCode / @group.Key.SubSubHeadName</div>
+                </div>
+
+                <!-- 4th Heads -->
+                @foreach (var i in group)
+                {
+                    <div class="d-flex justify-content-between align-items-center border rounded p-1 mb-1 bg-light flex-wrap text-muted small">
+
+                        <div>
+                            <span class="badge bg-primary me-2">
+                                @i.SubSubSubHeadCode
+                            </span>
+                            <small>@i.SubSubSubHeadName</small>
+                        </div>
+
+                        <div class="mt-2 mt-md-0 d-flex gap-2">
+
+                            <a href="@Url.Action("SubSubSubHeadDelete", "Accounts",
+                            new { Id = i.Id, SubSubSubHeadName = i.SubSubSubHeadName })"
+                               class="btn btn-sm btn-danger rounded-circle d-flex align-items-center justify-content-center"
+                               style="width:30px;height:30px;"
+                               title="Delete">
+
+                                <i class="bi bi-trash"></i>
+                            </a>
+
+                            <a href="@Url.Action("SubSubSubHead", "Accounts",
+                               new { Id = i.Id, SubSubSubHeadName = i.SubSubSubHeadName })"
+                               class="btn btn-sm btn-warning rounded-circle d-flex align-items-center justify-content-center"
+                               style="width:30px;height:30px;"
+                               title="Update">
+
+                                <i class="bi bi-pencil"></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        </div>
+    }
+
+</div>

@@ -1,0 +1,94 @@
+﻿@model IEnumerable<ERPSolution.Models.TblSubHead>
+@{
+    ViewBag.Title = "SaveSubHead";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<style>
+    .btn-danger:hover,
+    .btn-warning:hover {
+        transform: scale(1.1);
+        transition: 0.2s ease-in-out;
+    }
+</style>
+<div class="container-fluid mt-3">
+
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+        <h3 class=" fw-bold" style="color: #1b2a4a">2nd Head List</h3>
+
+        <div class="d-flex gap-2 mt-2 mt-md-0">
+            <a href="@Url.Action("SubHead","Accounts")"
+               class="btn" style="background-color: #1b2a4a;color:#fff">
+                Add 2nd Head
+            </a>
+
+            <a href="@Url.Action("Home","Admin")"
+               class="btn btn-secondary">
+                Back
+            </a>
+        </div>
+    </div>
+
+    <p class="text-center text-muted fw-bold">@ViewBag.msg</p>
+
+    @foreach (var group in Model.GroupBy(x => new
+    {
+        x.HeadCode,
+        x.HeadName
+    }))
+    {
+        <div class="card shadow-sm mb-3 border-0">
+            <div class="card-body">
+
+                <!-- Parent (1st Head) -->
+                <div class="mb-3">
+                    <div>
+                        <strong>1st:</strong> @group.Key.HeadCode / @group.Key.HeadName
+                    </div>
+                </div>
+
+                <!-- 2nd Heads -->
+                @foreach (var i in group)
+                {
+                    <div class="d-flex justify-content-between align-items-center border rounded p-1 mb-1 bg-light flex-wrap small text-muted">
+
+                        <div>
+                            <span class="badge bg-primary me-2">
+                                @i.sub_Head_Code
+                            </span>
+                            <small>@i.sub_Head_Name</small>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-2 mt-md-0">
+
+                            <!-- Delete -->
+                            <a href="@Url.Action("SubHeadDelete", "Accounts",
+                                new { Id = i.Id, sub_Head_Name = i.sub_Head_Name })"
+                               class="btn btn-sm btn-danger rounded-circle d-flex align-items-center justify-content-center"
+                               style="width:30px;height:30px;"
+                               title="Delete">
+
+                                <i class="bi bi-trash"></i>
+                            </a>
+
+                            <!-- Update -->
+                            <a href="@Url.Action("SubHead", "Accounts",
+                                new { Id = i.Id, sub_Head_Name = i.sub_Head_Name })"
+                               class="btn btn-sm btn-warning rounded-circle d-flex align-items-center justify-content-center"
+                               style="width:30px;height:30px;"
+                               title="Update">
+
+                                <i class="bi bi-pencil"></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        </div>
+    }
+
+</div>

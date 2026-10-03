@@ -1,0 +1,230 @@
+@model ERPSolution.Models.ChartOfAccountsViewModel
+@using System.Text.Json
+@{
+    ViewBag.Title = "Chart of Account";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<div class="container-fluid coa-page">
+    <div class="coa-heading">
+        <div>
+            <h3>Chart of Account</h3>
+            <p>Select an account head to see its complete hierarchy. The number on each row shows its direct items.</p>
+        </div>
+        <a href="@Url.Action("Home", "Admin")" class="btn btn-secondary">Back</a>
+    </div>
+
+    <div class="coa-scroll" aria-label="Chart of account hierarchy">
+        <div class="coa-grid">
+            <section class="coa-column">
+                <h4>1st Level</h4>
+                <div id="heads" class="coa-list"></div>
+            </section>
+            <section class="coa-column">
+                <h4>2nd Level</h4>
+                <div id="subHeads" class="coa-list coa-empty">Select a 1st-level head</div>
+            </section>
+            <section class="coa-column">
+                <h4>3rd Level</h4>
+                <div id="subSubHeads" class="coa-list coa-empty">Select a 2nd-level head</div>
+            </section>
+            <section class="coa-column">
+                <h4>4th Level</h4>
+                <div id="subSubSubHeads" class="coa-list coa-empty">Select a 3rd-level head</div>
+            </section>
+            <section class="coa-column">
+                <h4>5th Level / Accounts</h4>
+                <div id="accounts" class="coa-list coa-empty">Select a 4th-level head</div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script id="coa-data" type="application/json">@Html.Raw(JsonSerializer.Serialize(Model))</script>
+<script>
+    (function () {
+        const data = JSON.parse(document.getElementById('coa-data').textContent);
+        const levels = [
+            document.getElementById('heads'),
+            document.getElementById('subHeads'),
+            document.getElementById('subSubHeads'),
+            document.getElementById('subSubSubHeads'),
+            document.getElementById('accounts')
+        ];
+        const selected = [null, null, null, null, null];
+
+        function same(left, right) {
+            return left != null && right != null && String(left) === String(right);
+        }
+
+        function empty(level, message) {
+            levels[level].className = 'coa-list coa-empty';
+            levels[level].textContent = message;
+        }
+
+        function render(level, items, getCode, getName, getItemCount, onSelect, emptyMessage) {
+            const container = levels[level];
+            container.className = 'coa-list';
+            container.replaceChildren();
+
+            if (!items.length) {
+                empty(level, emptyMessage);
+                return;
+            }
+
+            items.forEach(function (item) {
+                const button = document.createElement('button');
+                const code = document.createElement('span');
+                const name = document.createElement('span');
+                const count = document.createElement('span');
+                button.type = 'button';
+                button.className = 'coa-item';
+                code.className = 'coa-code';
+                count.className = 'coa-count';
+                code.textContent = getCode(item);
+                name.textContent = getName(item);
+                const itemCount = getItemCount(item);
+                if (itemCount != null) {
+                    count.textContent = itemCount;
+                    count.title = itemCount + (itemCount === 1 ? ' item' : ' items');
+                    count.setAttribute('aria-label', count.title);
+                    button.append(code, name, count);
+                } else {
+                    button.append(code, name);
+                }
+                button.addEventListener('click', function () {
+                    selected[level] = item;
+                    Array.prototype.forEach.call(container.querySelectorAll('.coa-item'), function (entry) {
+                        entry.classList.remove('is-selected');
+                    });
+                    button.classList.add('is-selected');
+                    onSelect(item);
+                });
+                container.appendChild(button);
+            });
+        }
+
+        function resetAfter(level) {
+            for (let index = level + 1; index < selected.length; index++) {
+                selected[index] = null;
+            }
+        }
+
+        function showAccounts(fourth) {
+            const third = selected[2];
+            const second = selected[1];
+            const first = selected[0];
+            const accounts = data.Accounts.filter(function (account) {
+                return same(account.HeadCode, first.Head_Code) &&
+                    same(account.SubHeadCode, second.sub_Head_Code) &&
+                    same(account.SubSubHeadCode, third.sub_subHead_Code) &&
+                    same(account.SubSubSubHeadCode, fourth.SubSubSubHeadCode);
+            });
+            render(4, accounts,
+                function (account) { return account.AccCode == null ? '-' : account.AccCode; },
+                function (account) { return account.AccName || '(Unnamed account)'; },
+                function () { return null; },
+                function () { },
+                'No registered accounts at this level');
+        }
+
+        function showFourth(third) {
+            resetAfter(2);
+            const second = selected[1];
+            const first = selected[0];
+            const fourth = data.SubSubSubHeads.filter(function (item) {
+                return same(item.HeadCode, first.Head_Code) &&
+                    same(item.SubHeadCode, second.sub_Head_Code) &&
+                    same(item.SubSubHeadCode, third.sub_subHead_Code);
+            });
+            render(3, fourth,
+                function (item) { return item.SubSubSubHeadCode == null ? '-' : item.SubSubSubHeadCode; },
+                function (item) { return item.SubSubSubHeadName || '(Unnamed head)'; },
+                function (item) {
+                    return data.Accounts.filter(function (account) {
+                        return same(account.HeadCode, first.Head_Code) &&
+                            same(account.SubHeadCode, second.sub_Head_Code) &&
+                            same(account.SubSubHeadCode, third.sub_subHead_Code) &&
+                            same(account.SubSubSubHeadCode, item.SubSubSubHeadCode);
+                    }).length;
+                },
+                showAccounts,
+                'No 4th-level heads found');
+            empty(4, 'Select a 4th-level head');
+        }
+
+        function showThird(second) {
+            resetAfter(1);
+            const first = selected[0];
+            const third = data.SubSubHeads.filter(function (item) {
+                return same(item.HeadCode, first.Head_Code) && same(item.subHeadCode, second.sub_Head_Code);
+            });
+            render(2, third,
+                function (item) { return item.sub_subHead_Code == null ? '-' : item.sub_subHead_Code; },
+                function (item) { return item.sub_subHead_Name || '(Unnamed head)'; },
+                function (item) {
+                    return data.SubSubSubHeads.filter(function (fourth) {
+                        return same(fourth.HeadCode, first.Head_Code) &&
+                            same(fourth.SubHeadCode, second.sub_Head_Code) &&
+                            same(fourth.SubSubHeadCode, item.sub_subHead_Code);
+                    }).length;
+                },
+                showFourth,
+                'No 3rd-level heads found');
+            empty(3, 'Select a 3rd-level head');
+            empty(4, 'Select a 4th-level head');
+        }
+
+        function showSecond(first) {
+            resetAfter(0);
+            const second = data.SubHeads.filter(function (item) {
+                return same(item.HeadCode, first.Head_Code);
+            });
+            render(1, second,
+                function (item) { return item.sub_Head_Code == null ? '-' : item.sub_Head_Code; },
+                function (item) { return item.sub_Head_Name || '(Unnamed head)'; },
+                function (item) {
+                    return data.SubSubHeads.filter(function (third) {
+                        return same(third.HeadCode, first.Head_Code) &&
+                            same(third.subHeadCode, item.sub_Head_Code);
+                    }).length;
+                },
+                showThird,
+                'No 2nd-level heads found');
+            empty(2, 'Select a 2nd-level head');
+            empty(3, 'Select a 3rd-level head');
+            empty(4, 'Select a 4th-level head');
+        }
+
+        render(0, data.Heads, function (item) {
+            return item.Head_Code == null ? '-' : item.Head_Code;
+        }, function (item) {
+            return item.Head_Name || '(Unnamed head)';
+        }, function (item) {
+            return data.SubHeads.filter(function (second) {
+                return same(second.HeadCode, item.Head_Code);
+            }).length;
+        }, showSecond, 'No 1st-level heads found');
+    })();
+</script>
+
+<style>
+    .coa-page { padding-top: 18px; padding-bottom: 24px; }
+    .coa-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .coa-heading h3 { margin: 0; color: #1b2a4a; font-weight: 800; }
+    .coa-heading p { margin: 4px 0 0; color: #6b7280; font-size: .9rem; }
+    .coa-scroll { overflow-x: auto; padding-bottom: 4px; border-radius: 10px; }
+    .coa-grid { display: grid; grid-template-columns: repeat(5, minmax(210px, 1fr)); min-width: 1080px; border: 1px solid #d9e1ec; border-radius: 10px; overflow: hidden; background: #fff; }
+    .coa-column { min-height: 300px; border-right: 1px solid #d9e1ec; display: flex; flex-direction: column; }
+    .coa-column:last-child { border-right: 0; }
+    .coa-column h4 { margin: 0; padding: 11px 12px; background: #1b2a4a; color: #fff; text-align: center; font-size: .95rem; font-weight: 700; }
+    .coa-list { --coa-row-height: 44px; display: flex; flex-direction: column; max-height: calc((var(--coa-row-height) * 6) + (4px * 5) + 12px); overflow-y: auto; scrollbar-gutter: stable; padding: 6px; gap: 4px; }
+    .coa-empty { min-height: 252px; justify-content: center; align-items: center; text-align: center; color: #8a94a6; font-size: .84rem; padding: 20px; }
+    .coa-item { width: 100%; min-height: var(--coa-row-height); border: 0; border-radius: 6px; padding: 9px 10px; display: flex; gap: 7px; align-items: center; text-align: left; background: #f7f9fc; color: #27364f; font-size: .88rem; transition: background .15s ease, color .15s ease, transform .15s ease; }
+    .coa-item:hover { background: #e8eef9; transform: translateX(2px); }
+    .coa-item.is-selected { background: #234c6a; color: #fff; }
+    .coa-code { min-width: 26px; font-weight: 800; }
+    .coa-count { min-width: 24px; margin-left: auto; border-radius: 999px; padding: 2px 7px; background: #dfe8f5; color: #1b2a4a; text-align: center; font-size: .75rem; font-weight: 800; line-height: 1.2; }
+    .coa-item.is-selected .coa-count { background: #fff; color: #234c6a; }
+    @@media (max-width: 600px) { .coa-page { padding: 12px; } .coa-heading { align-items: flex-start; } .coa-heading h3 { font-size: 1.2rem; } .coa-heading p { font-size: .8rem; } }
+</style>

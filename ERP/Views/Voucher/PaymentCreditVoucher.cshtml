@@ -1,0 +1,180 @@
+@{
+    ViewBag.Title = "Payment Voucher";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<div class="container-fluid voucher-page">
+    <div class="voucher-heading">
+        <div>
+            <h3>Payment Voucher</h3>
+            <p>Record a payment entry between the selected two accounts.</p>
+        </div>
+        <div class="voucher-heading-actions">
+            <button id="openAccountPopup" type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Add Account</button>
+            <a href="@Url.Action("Finance", "Admin")" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+
+    <section class="voucher-card" aria-label="Payment voucher form">
+        <div id="formMessage" class="alert d-none" role="alert"></div>
+        <form id="receivingVoucherForm">
+            <div class="row g-3">
+                <div class="col-md-4 col-6">
+                    <label for="Date" class="form-label">Date</label>
+                    <input id="Date" type="text" class="form-control" required />
+                </div>
+                <div class="col-md-4 col-6">
+                    <label for="cashBankAccountCode" class="form-label">Cash / Bank Account</label>
+                    <input id="cashBankAccountCode" type="text" class="form-control" required />
+                </div>
+                <div class="col-md-4 col-6">
+                    <label for="accountCode" class="form-label">Select Account</label>
+                    <input id="accountCode" type="text" class="form-control" required />
+                </div>
+                <div class="col-md-4 col-6">
+                    <label for="amount" class="form-label">Amount</label>
+                    <input id="amount" type="number" min="0.01" step="0.01" class="form-control" placeholder="0.00" required />
+                </div>
+                <div class="col-md-6 col-6">
+                    <label for="narration" class="form-label">Narration</label>
+                    <input id="narration" type="text" maxlength="500" class="form-control" placeholder="Optional details" />
+                </div>
+                <div class="col-md-2 col-6 d-flex align-items-end">
+                    <button id="saveButton" type="submit" class="btn btn-primary w-100">Save</button>
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <section class="voucher-card voucher-list-card" aria-label="Payment voucher records">
+        <div class="voucher-list-heading">
+            <h5>Payment Voucher Records</h5>
+            <button id="refreshButton" type="button" class="btn btn-outline-secondary btn-sm">Refresh</button>
+        </div>
+        <div class="row g-2 mb-3 voucher-filters">
+            <div class="col-md-4 col-6">
+                <label for="recordAccountCode" class="form-label">Account</label>
+                <input id="recordAccountCode" type="text" class="form-control" placeholder="All accounts" />
+            </div>
+            <div class="col-md-3 col-6">
+                <label for="fromDate" class="form-label">From Date</label>
+                <input id="fromDate" type="text" class="form-control" />
+            </div>
+            <div class="col-md-3 col-6">
+                <label for="toDate" class="form-label">To Date</label>
+                <input id="toDate" type="text" class="form-control" />
+            </div>
+            <div class="col-md-2 col-6 d-flex align-items-end">
+                <button id="searchRecordsButton" type="button" class="btn btn-primary w-100">Search</button>
+            </div>
+        </div>
+        <div class="table-responsive voucher-table-wrap">
+            <table class="table table-hover align-middle mb-0">
+                <thead><tr><th>Date</th><th>Cash / Bank</th><th>Account</th><th class="text-end">Amount</th><th>Narration</th><th class="text-end">Actions</th></tr></thead>
+                <tbody id="voucherRows"><tr><td colspan="6" class="text-center text-muted py-4">Loading records...</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" id="accountPopup" tabindex="-1" aria-labelledby="accountPopupTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content account-popup-modal">
+            <div class="modal-header">
+                <h5 class="modal-title" id="accountPopupTitle">Account Registration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="accountPopupMessage" class="alert d-none" role="alert"></div>
+                <form id="accountPopupForm" class="account-popup-form">
+                    <div class="row g-2">
+                        <div class="col-md-3 col-6">
+                            <label for="accountPopupDate" class="form-label">Date</label>
+                            <input id="accountPopupDate" type="text" class="form-control" required />
+                        </div>
+                        <div class="col-md-5 col-6">
+                            <label for="accountPopupTitleField" class="form-label">Account Title</label>
+                            <input id="accountPopupTitleField" type="text" class="form-control" required />
+                        </div>
+                        <div class="col-md-4 col-12">
+                            <label for="accountPopupName" class="form-label">Account Name</label>
+                            <input id="accountPopupName" type="text" class="form-control" required />
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <label for="accountPopupMobile" class="form-label">Mobile</label>
+                            <input id="accountPopupMobile" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <label for="accountPopupAddress" class="form-label">Address</label>
+                            <input id="accountPopupAddress" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-4 col-6 d-flex align-items-end">
+                            <button id="saveAccountPopup" type="submit" class="btn btn-success w-100"><i class="fa fa-save"></i> Save Account</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="account-popup-list-heading">
+                    <h6>Registered Accounts</h6>
+                    <div class="account-popup-list-actions">
+                        <input id="accountPopupSearch" type="search" class="form-control" placeholder="Search account" />
+                        <button id="refreshAccountPopup" type="button" class="btn btn-outline-secondary"><i class="fa fa-refresh"></i></button>
+                    </div>
+                </div>
+                <div class="table-responsive account-popup-table-wrap">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead><tr><th>Account Name</th><th>Mobile</th><th>Address</th><th class="text-end">Action</th></tr></thead>
+                        <tbody id="accountPopupRows"><tr><td colspan="4" class="text-center text-muted py-4">Loading accounts...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="receivingPrintModal" tabindex="-1" aria-labelledby="receivingPrintModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content voucher-print-modal">
+        <div class="modal-header"><h5 class="modal-title" id="receivingPrintModalTitle">Payment Voucher</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+        <div class="modal-body"><div id="receivingPrintArea" class="voucher-print-area">
+            <div class="voucher-print-company"><div class="voucher-print-company-name">@ERPSolution.Controllers.TblProfileController.Name()</div><div>@ERPSolution.Controllers.TblProfileController.Mobile() / @ERPSolution.Controllers.TblProfileController.Phone()</div><div>@ERPSolution.Controllers.TblProfileController.Address()</div></div>
+            <div class="voucher-print-title">PAYMENT VOUCHER</div>
+            <div class="voucher-print-info"><span>Date: <strong id="printVoucherDate"></strong></span><span>Voucher #: <strong id="printVoucherId"></strong></span></div>
+            <table class="voucher-print-table"><thead><tr><th>Cash / Bank</th><th>Account</th><th>Amount</th></tr></thead><tbody><tr><td id="printCashBank"></td><td id="printAccount"></td><td id="printAmount" class="text-end"></td></tr></tbody></table>
+            <div class="voucher-print-narration"><strong>Narration:</strong> <span id="printNarration"></span></div>
+        </div></div>
+        <div class="modal-footer"><button type="button" class="btn btn-outline-primary" onclick="printReceivingVoucherReceipt()"><i class="fa fa-print"></i> Print</button><button type="button" class="btn btn-primary" onclick="shareReceivingVoucherPdf()"><i class="fa fa-share-alt"></i> Share PDF</button><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div>
+    </div></div>
+</div>
+
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script>
+    window.voucherScreen = { name: "Payment", cashType: "CPV", bankType: "BPV", amountField: "Credit" };
+</script>
+<script src="~/JsFiles/rcVoucherJs.js?v=@DateTime.Now.Ticks"></script>
+<script src="~/JsFiles/paymentAccountPopup.js?v=@DateTime.Now.Ticks"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+    .voucher-page { padding-top: 18px; padding-bottom: 24px; max-width: 1440px; }
+    .voucher-heading-actions { display: flex; gap: 8px; align-items: center; }
+    .account-popup-form { padding: 12px; margin-bottom: 16px; border: 1px solid #d9e1ec; border-radius: 8px; background: #f8fafc; }
+    .account-popup-list-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .account-popup-list-heading h6 { margin: 0; color: #1b2a4a; font-weight: 800; }
+    .account-popup-list-actions { display: flex; gap: 8px; }
+    .account-popup-list-actions input { min-width: 220px; }
+    .account-title { display: inline-block; color: #7b8794; font-size: .72rem; }
+    .account-popup-table-wrap tbody td { font-size: .82rem; }
+    .account-popup-table-wrap { max-height: 420px; overflow-y: auto; border: 1px solid #e4eaf2; border-radius: 8px; }
+    .account-popup-table-wrap thead th { position: sticky; top: 0; z-index: 1; background: #1b2a4a; color: #fff; white-space: nowrap; }
+    .voucher-heading, .voucher-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .voucher-heading { margin-bottom: 18px; }.voucher-heading h3, .voucher-list-heading h5 { margin: 0; color: #1b2a4a; font-weight: 800; }.voucher-heading p { margin: 4px 0 0; color: #6b7280; font-size: .9rem; }
+    .voucher-card { margin-bottom: 18px; padding: 20px; border: 1px solid #d9e1ec; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(27,42,74,.05); }.voucher-card .form-label { color: #243b5a; font-weight: 700; }.voucher-card .form-control { min-height: 42px; }.voucher-card .btn-primary { min-height: 30px; background: #234c6a; border-color: #234c6a; }
+    .voucher-list-heading { margin-bottom: 14px; }.voucher-table-wrap { max-height: 360px; overflow-y: auto; border: 1px solid #e4eaf2; border-radius: 8px; }.voucher-table-wrap thead th { position: sticky; top: 0; z-index: 1; padding: 11px 14px; background: #1b2a4a; color: #fff; font-size: .85rem; white-space: nowrap; }.voucher-table-wrap tbody td { padding: 11px 14px; }
+    .voucher-print-modal .modal-header { border-bottom-color: #d9e1ec; }.voucher-print-modal .modal-title { color: #1b2a4a; font-weight: 800; }.voucher-print-area { border: 1px solid #d9e1ec; border-radius: 8px; overflow: hidden; color: #1b2a4a; }.voucher-print-company { padding: 18px 14px 12px; text-align: center; font-size: .82rem; font-weight: 600; }.voucher-print-company-name { font-size: 1.35rem; font-weight: 800; letter-spacing: .4px; }.voucher-print-title { padding: 8px 14px; background: #1b2a4a; color: #fff; text-align: center; font-size: .9rem; font-weight: 800; letter-spacing: .5px; }.voucher-print-info { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; border-bottom: 1px dashed #b8c5d6; font-size: .8rem; }.voucher-print-table { width: 100%; margin: 0; border-collapse: collapse; font-size: .82rem; }.voucher-print-table th { padding: 9px 10px; background: #edf2f7; color: #1b2a4a; text-align: left; }.voucher-print-table td { padding: 10px; border-top: 1px solid #e2e8f0; }.voucher-print-narration { min-height: 48px; padding: 11px 14px; border-top: 1px solid #e2e8f0; font-size: .82rem; }
+    @@media (max-width: 600px) { .voucher-page { padding: 8px; }.voucher-heading { align-items: flex-start; margin-bottom: 8px; }.voucher-heading h3 { font-size: 1.1rem; }.voucher-heading p { display: none; }.voucher-heading-actions { gap: 4px; }.voucher-heading-actions .btn { padding: 5px 7px; font-size: .75rem; }.voucher-heading p { display: none; }.voucher-card { margin-bottom: 8px; padding: 10px; border-radius: 10px; }.voucher-card .row, .voucher-filters { --bs-gutter-x: .4rem; --bs-gutter-y: .4rem; }.voucher-card .form-label { margin-bottom: 3px; font-size: .8rem; }.voucher-card .form-control, .voucher-card .k-input, .voucher-card .k-input-inner { min-height: 34px; font-size: .85rem; }.voucher-card .k-multicolumncombobox { width: 100% !important; }.voucher-card .btn-primary { min-height: 34px; font-size: .85rem; }.voucher-list-card { padding: 8px; }.voucher-list-heading { margin-bottom: 6px; }.voucher-list-heading h5 { font-size: .9rem; }.voucher-list-heading .btn { min-height: 32px; padding: 3px 8px; font-size: .75rem; }.voucher-filters { margin-bottom: 6px !important; }.voucher-filters .form-label { margin-bottom: 3px; font-size: .8rem; }.voucher-filters .form-control, .voucher-filters .k-input, .voucher-filters .k-input-inner, .voucher-filters .btn { min-height: 34px; font-size: .8rem; }.voucher-table-wrap { max-height: 450px; }.voucher-table-wrap thead th, .voucher-table-wrap tbody td { padding: 6px 8px; font-size: .75rem; }.voucher-print-company { padding: 14px 10px 10px; }.voucher-print-company-name { font-size: 1.15rem; }.voucher-print-info { padding: 8px 10px; font-size: .72rem; }.voucher-print-table { font-size: .72rem; }.voucher-print-table th, .voucher-print-table td { padding: 7px 6px; }.account-popup-list-heading { align-items: stretch; flex-direction: column; }.account-popup-list-actions { width: 100%; }.account-popup-list-actions input { min-width: 0; flex: 1; } }
+</style>

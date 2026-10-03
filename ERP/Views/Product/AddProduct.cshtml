@@ -1,0 +1,699 @@
+﻿@model ERPSolution.Models.TblProduct
+@{
+    ViewBag.Title = "AddProduct";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+<link href="~/Font/font-awesome.css" rel="stylesheet" />
+<style>
+    p {
+        font-size: 28px;
+    }
+
+    label {
+        font-size: 12px;
+    }
+
+    .sale-font {
+        font-size: 11px;
+        font-weight: bold;
+    }
+
+    @@media (max-width: 600px) {
+        p {
+            font-size: 18px;
+        }
+
+        .bb {
+            display: none;
+        }
+    }
+</style>
+<div class="container-fluid">
+    <section class="mt-2">
+        <div class="row">
+            <div class="col-md-7 col-7">
+                <p style="font-weight: bold; color: #1b2a4a">Create Product</p>
+            </div>
+            <div class="col-md-5 col-5">
+                <input type="text" class="form-control sc" id="MyInput2" onkeyup="myFunction2()" placeholder="Search Item" />
+            </div>
+
+        </div>
+    </section>
+    <section class="shadow p-2">
+        <div class="row">
+            <div class="col-md-4 col-8">
+                <label><b>Select Category:</b></label>
+                @Html.HiddenFor(x => x.Id, new { @class = "form-control form-control-lg ss" })
+                @Html.TextBoxFor(x => x.SCId, new { @class = "form-control ss  sale-font" })
+                @Html.HiddenFor(x => x.CId, new { @class = "form-control" })
+                @Html.HiddenFor(x => x.CategoryName, new { @class = "form-control" })
+                @Html.HiddenFor(x => x.SubCategoryName, new { @class = "form-control" })
+            </div>
+            <div class="col-md-2 col-4">
+                <label><b>Rack:</b></label>
+                @Html.TextBoxFor(x => x.RId, new { @class = "form-control ss  sale-font" })
+                @Html.HiddenFor(x => x.RackName, new { @class = "form-control" })
+            </div>
+            <div class="col-md-2 col-6">
+                <label><b>Select Unit:</b></label>
+                @Html.DropDownListFor(x => x.Unit, ViewBag.units as SelectList, "Select Unit", new { @class = "form-control ss sale-font" })
+            </div>
+            <div class="col-md-1 col-6">
+                <label><b>Limit:</b></label>
+                @Html.TextBoxFor(x => x.StockLimit, new { @class = "form-control ss sale-font" })
+            </div>
+            <div class="col-md-1 col-6">
+                <label><b>BatchNo:</b></label>
+                @Html.TextBoxFor(x => x.BatchNo, new { @class = "form-control ss sale-font" })
+            </div>
+            <div class="col-md-2 col-6">
+                <label><b>Barcode:</b></label>
+                @Html.TextBoxFor(x => x.Barcode, new { @class = "form-control ss sale-font" })
+            </div>
+            <div class="col-md-4 col-12">
+                <label><b>Item Name:</b></label>
+                @Html.TextBoxFor(x => x.Item, new { @class = "form-control ss sale-font" })
+            </div>
+            <div class="col-md-2 col-6">
+                <label><b>Enter Colour:</b></label>
+                @Html.TextBoxFor(x => x.Colour, new { @class = "form-control ss sale-font" })
+            </div>
+            <div class="col-md-2 col-6">
+                <label><b>Enter Size:</b></label>
+                @Html.TextBoxFor(x => x.Size, new { @class = "form-control ss sale-font" })
+            </div>
+            <div class="col-md-2 col-6">
+                <label><b>Pack Qty:</b></label>
+                @Html.TextBoxFor(x => x.UnitPack, new { @class = "form-control ss sale-font" })
+            </div>
+            <div class="col-md-2 col-6">
+                <label><b>Enter Cost Rate:</b></label>
+                @Html.TextBoxFor(x => x.CostRate, new { @class = "form-control ss sale-font" })
+            </div>
+            <div class="col-md-2 col-6">
+                <label><b>Enter Sale Rate:</b></label>
+                @Html.TextBoxFor(x => x.SaleRate, new { @class = "form-control ss sale-font", id = "SaleRate" })
+            </div>
+            <div class="col-md-1 col-6">
+                <label><b>Dis%:</b></label>
+                @Html.TextBoxFor(x => x.DisPer, new { @class = "form-control ss sale-font", id = "DisPer" })
+            </div>
+            <div class="col-md-1 col-6">
+                <label><b>Dis Amt:</b></label>
+                @Html.TextBoxFor(x => x.DisAmt, new { @class = "form-control ss sale-font", id = "DisAmt" })
+            </div>
+            <div class="col-md-2 col-6">
+                <label><b>Enter Sale Amt:</b></label>
+                @Html.TextBoxFor(x => x.SaleAmt, new { @class = "form-control ss sale-font", id = "SaleAmt" })
+            </div>
+            <div class="col-md-2 col-6">
+                <label><b>Opening Stock:</b></label>
+                @Html.TextBoxFor(x => x.StockInHand, new { @class = "form-control ss sale-font" })
+            </div>
+            <div class="col-md-2 col-12">
+                <label><b>Product Location:</b></label>
+                @Html.TextBoxFor(x => x.Status, new { @class = "form-control ss sale-font" })
+            </div>
+            <div class="col-md-2 col-12">
+                <input type="submit" class="btn btn-sm form-control" onclick="SaveProduct()" value="Save Product" style="background-color: #1b2a4a; color: white; margin-top: 24px" />
+            </div>
+        </div>
+    </section>
+    <section>
+        <table class="table table-sm table-bordered table-hover" id="ptbl">
+            <thead>
+                <tr style="background-color: #077A7D" class="text-white">
+                    <td style="background-color: #2c3e63; width: 10%; display: none " class="text-white"><b>ID</b></td>
+                    <td style="background-color: #2c3e63; width: 20% " class="text-white"><b>Item</b></td>
+                    <td style="background-color: #2c3e63; width: 8% " class="text-white bb"><b>Colour</b></td>
+                    <td style="background-color: #2c3e63; width: 8% " class="text-white bb"><b>Size</b></td>
+                    <td style="background-color: #2c3e63; width: 5% " class="text-white bb"><b>Rate</b></td>
+                    <td style="background-color: #2c3e63; width: 5% " class="text-white bb"><b>Discount</b></td>
+                    <td style="background-color: #2c3e63; width: 5% " class="text-white bb"><b>SaleAmt</b></td>
+                    <td style="background-color: #2c3e63; width: 5% " class="text-white bb"><b>Packing</b></td>
+                    <td style="background-color: #2c3e63; width: 10% " class="text-white bb"><b>OpeningStock</b></td>
+                    <td style="background-color: #2c3e63; width: 5% " class="text-white bb"><b>Limit</b></td>
+                    <td style="background-color: #2c3e63; width: 18% " class="text-white bb"><b>Location</b></td>
+                    <td style="background-color: #2c3e63; width: 5% " class="text-white"><b><i class="fa fa-remove"></i></b></td>
+                    <td style="background-color: #2c3e63; width: 5%; " class="text-white"><b><i class="fa fa-pencil"></i></b></td>
+                </tr>
+            </thead>
+            <tbody class="pbody" id="pp"></tbody>
+        </table>
+        <div id="paginationContainer" class="mt-3"></div>
+    </section>
+</div>
+<style>
+    .ss {
+        border: 2px solid #4a5c8a;
+        background-color: #f9f9f9;
+    }
+
+    .sc {
+        border: 2px solid #4a5c8a;
+        background-color: #f9f9f9;
+    }
+
+    table thead tr td {
+        font-size: 12px;
+    }
+
+    table tbody tr td {
+        font-size: 12px;
+        font-weight: bold;
+    }
+</style>
+
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script>
+    $(document).ready(function () {
+        //fetchBarcode();
+        loadData();
+
+        var dataSource1 = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "/Product/GetSubCategory",
+                    dataType: "json"
+                }
+            }
+        });
+
+        $("#SCId").kendoMultiColumnComboBox({
+            dataTextField: "SubCategoryName",
+            dataValueField: "SCId",
+            height: 450,
+            columns: [
+                { field: "SubCategoryName", title: "Category", width: 350 }
+            ],
+            filter: "contains",
+            filterFields: ["SubCategoryName"],
+            dataSource: dataSource1,
+            dataBound: function () {
+                var combo = this;
+                var data = combo.dataSource.view();
+
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].SubCategoryName === "None") {
+                        combo.select(i);
+                        combo.value(data[i].SCId);
+
+                        $("#CId").val(data[i].CId);
+                        $("#CategoryName").val(data[i].CategoryName);
+                        $("#SubCategoryName").val(data[i].SubCategoryName);
+                        break;
+                    }
+                }
+            },
+            change: function () {
+                var selectedItem = this.dataItem(this.selectedIndex);
+                if (selectedItem) {
+                    $("#CId").val(selectedItem.CId);
+                    $("#CategoryName").val(selectedItem.CategoryName);
+                    $("#SubCategoryName").val(selectedItem.SubCategoryName);
+                }
+            }
+        });
+
+        //#########################################################################
+        //#########################################################################
+        var dataSource2 = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "/Product/GetRack",
+                    dataType: "json"
+                }
+            }
+        });
+
+        $("#RId").kendoMultiColumnComboBox({
+            dataTextField: "RackName",
+            dataValueField: "RCode",
+            height: 450,
+            columns: [
+                { field: "RackName", title: "Rack", width: 350 }
+            ],
+            filter: "contains",
+            filterFields: ["RackName"],
+            dataSource: dataSource2,
+            dataBound: function () {
+                var combo = this;
+                var data = combo.dataSource.view();
+
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].RackName === "None") {
+                        combo.select(i);
+                        combo.value(data[i].RCode);
+                        $("#RackName").val(data[i].RackName);
+                        break;
+                    }
+                }
+            },
+            change: function () {
+                var selectedItem = this.dataItem(this.selectedIndex);
+                if (selectedItem) {
+                    $("#RackName").val(selectedItem.RackName);
+                }
+            }
+        });
+        
+        dataSource15 = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "/Product/GetProduct",
+                    dataType: "json"
+                }
+            }
+        });
+        $("#Item").kendoAutoComplete({
+            dataSource: dataSource15,
+            filter: "startswith",
+            placeholder: "Item Name...",
+            //separator: ", "
+        });
+
+        function fetchBarcode() {
+            $.ajax({
+                type: "GET",
+                url: "/Product/getBarcode",
+                data: "{}",
+                success: function (data) {
+                    $("#Barcode").val(data);
+                }
+            });
+        };
+    });
+
+    function SaveProduct() {
+        //alert();
+        let Id = $("#Id").val().trim();
+        let CId = $("#CId").val().trim();
+        let CategoryName = $("#CategoryName").val().trim();
+        let SCId = $("#SCId").val().trim();
+        let SubCategoryName = $("#SubCategoryName").val().trim();
+        let RId = $("#RId").val().trim();
+        let RackName = $("#RackName").val().trim();
+        let Barcode = $("#Barcode").val().trim();
+        let Item = $("#Item").val().trim();
+        let Unit = $("#Unit").val().trim();
+        let Colour = $("#Colour").val().trim();
+        let Size = $("#Size").val().trim();
+        let CostRate = $("#CostRate").val().trim();
+        let SaleRate = $("#SaleRate").val().trim();
+        let UnitPack = $("#UnitPack").val().trim();
+        let StockInHand = $("#StockInHand").val().trim();
+        let StockLimit = $("#StockLimit").val().trim();
+        let Status = $("#Status").val().trim();
+        let BatchNo = $("#BatchNo").val().trim();
+        let DisPer = $("#DisPer").val().trim();
+        let DisAmt = $("#DisAmt").val().trim();
+        let SaleAmt = $("#SaleAmt").val().trim();
+        //alert(CostRate + "-----" + SaleRate + "-----" + BatchNo); SaleAmt
+        if (SubCategoryName.length != 0) {
+            if (RackName.length != 0) {
+                if (Item.length != 0) {
+                    var empObj = {
+                        Id: Id,
+                        CId: CId,
+                        CategoryName: CategoryName,
+                        SCId: SCId,
+                        SubCategoryName: SubCategoryName,
+                        RId: RId,
+                        RackName: RackName,
+                        Barcode: Barcode,
+                        BatchNo: BatchNo,
+                        Item: Item,
+                        Unit: Unit,
+                        Colour: Colour,
+                        Size: Size,
+                        CostRate: CostRate,
+                        SaleRate: SaleRate,
+                        DisPer: DisPer,
+                        DisAmt: DisAmt,
+                        SaleAmt: SaleAmt,
+                        UnitPack: UnitPack,
+                        StockInHand: StockInHand,
+                        StockLimit: StockLimit,
+                        Status: Status,
+                    };
+                    //alert(Barcode + "---" + _saleid + "---" + itemdis + "---" + rate + "---" + qty);
+                    $.ajax({
+                        url: "/Product/AddNewProduct/",
+                        data: JSON.stringify(empObj),
+                        type: "POST",
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        success: function (result) {
+                            $("#Id").val('');
+                            $("#Barcode").val('');
+                            $("#Item").val('');
+                            $("#CostRate").val('');
+                            $("#SaleRate").val('');
+                            $("#SaleAmt").val('');
+                            $("#StockInHand").val('');
+                            loadData();
+                            history.pushState({}, "", "/Product/AddProduct");
+                            $("#Item").focus();
+                            //fetchBarcode();
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage.responseText);
+                        }
+                    });
+                } else {
+                    alert("Please Enter Item Name");
+                }
+            } else {
+                alert("Please Select Rack");
+            }
+        } else {
+            alert("Please Select Category Name");
+        }
+    };
+    //####################################################################################################
+    //####################################################################################################
+    var allProducts = [];
+    var filteredProducts = [];   // search ke baad ka data
+    var currentPage = 1;
+    var pageSize = 50;
+
+    function loadData() {
+        var id = 1;
+        var empObj = {
+            Id: id,
+        };
+        $.ajax({
+            url: "/Product/ProductList",
+            data: JSON.stringify(empObj),
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                allProducts = result;
+                filteredProducts = result;   // shuru mein filter empty hota hai
+                currentPage = 1;
+                renderTable();
+                renderPagination();
+            },
+            error: function (errormessage) {
+                //alert(errormessage.responseText);
+            }
+        });
+    }
+
+    function renderTable() {
+        var html = '';
+        $('.pbody').html("");
+
+        var startIndex = (currentPage - 1) * pageSize;
+        var endIndex = startIndex + pageSize;
+        var pageData = filteredProducts.slice(startIndex, endIndex);   // filteredProducts use karo
+
+        $.each(pageData, function (key, item) {
+            var url = '/Product/AddProduct?Id=' + item.Id;
+            html += '<tr>';
+            html += '<td class="aa" style="font-weight:bold;display:none">' + item.Id + '</td>';
+            html += '<td class="aa bb" style="font-weight:bold;display:none">' + item.Barcode + '</td>';
+            html += '<td class="aa" style="cursor: pointer;font-weight:bold" onclick="Ledger(' + item.Id + ')"><i style="opacity:0.4;font-size:11px">' + item.CategoryName + '/' + item.SubCategoryName + '</i><br /> ' + item.Item + '</td>';
+            html += '<td class="aa bb" style="font-weight:bold">' + item.Colour + '</td>';
+            html += '<td class="aa bb" style="font-weight:bold">' + item.Size + '</td>';
+            html += '<td class="aa bb" style="font-weight:bold">' + item.CostRate + ' / ' + item.SaleRate + '</td>';
+            html += '<td class="aa bb" style="font-weight:bold;color:red">' + item.DisPer + ' % / ' + item.DisAmt + '</td>';
+            html += '<td class="aa bb" style="font-weight:bold">' + item.SaleAmt + '</td>';
+            html += '<td class="aa bb" style="font-weight:bold">1 x  ' + item.UnitPack + '</td>';
+            html += '<td class="aa bb" style="font-weight:bold">' + item.StockInHand + ' <i style="opacity:0.4;font-size:11px">' + item.Unit + '</i></td>';
+            html += '<td class="aa bb" style="font-weight:bold">' + item.StockLimit + '  <i style="opacity:0.4;font-size:11px">' + item.Unit + '</i></td>';
+            html += '<td class="aa bb" style="font-weight:bold">' + item.RackName + ' <br /><i style="opacity:0.4">' + item.Status + '</i></td>';
+            html += '<td class="divhi"> <a href="#" class="btn btn-sm btn-danger form-control" onclick="DeleleNew(' + item.Id + ')"><i class="fa fa-remove"></i></a></td>';
+            html += '<td class="divhi next"> <a href="' + url + '" class="btn btn-sm btn-warning form-control"><i class="fa fa-pencil"></i></a></td>';
+            html += '</tr>';
+        });
+
+        $('.pbody').html(html);
+    }
+
+    function renderPagination() {
+        var totalRecords = filteredProducts.length;   // filteredProducts use karo
+        var totalPages = Math.ceil(totalRecords / pageSize);
+
+        if (totalRecords <= pageSize) {
+            $('#paginationContainer').html('');
+            return;
+        }
+
+        var isMobile = $(window).width() < 768;
+        var maxVisible = isMobile ? 3 : 10;
+
+        var windowIndex = Math.floor((currentPage - 1) / maxVisible);
+        var startPage = windowIndex * maxVisible + 1;
+        var endPage = Math.min(startPage + maxVisible - 1, totalPages);
+
+        var html = '<ul class="pagination flex-wrap">';
+
+        html += '<li class="page-item ' + (currentPage === 1 ? 'disabled' : '') + '">' +
+            '<a class="page-link" href="#" onclick="goToPage(' + (currentPage - 1) + ');return false;">Prev</a></li>';
+
+        for (var i = startPage; i <= endPage; i++) {
+            html += '<li class="page-item ' + (i === currentPage ? 'active' : '') + '">' +
+                '<a class="page-link" href="#" onclick="goToPage(' + i + ');return false;">' + i + '</a></li>';
+        }
+
+        html += '<li class="page-item ' + (currentPage === totalPages ? 'disabled' : '') + '">' +
+            '<a class="page-link" href="#" onclick="goToPage(' + (currentPage + 1) + ');return false;">Next</a></li>';
+
+        html += '</ul>';
+
+        $('#paginationContainer').html(html);
+    }
+
+    function goToPage(page) {
+        var totalPages = Math.ceil(filteredProducts.length / pageSize);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderTable();
+        renderPagination();
+    }
+
+    $(window).on('resize', function () {
+        if (allProducts.length > 0) {
+            renderPagination();
+        }
+    });
+
+    // ===== Search Function (updated) =====
+    function myFunction2() {
+        var input = document.getElementById("MyInput2");
+        var filter = input.value.toUpperCase().trim();
+
+        if (filter === "") {
+            // Search khali ho to sara data wapas dikhao
+            filteredProducts = allProducts;
+        } else {
+            // Har item ke tamam fields (Item, Barcode, Colour, Size, Rate,
+            // Discount, SaleAmt, Category, Rack, Location, waghera) me se
+            // kisi bhi field me match dhoondein — generic, koi field
+            // hardcode nahi kiya taake naye columns add hone par bhi
+            // search apne aap kaam karta rahe.
+            filteredProducts = allProducts.filter(function (item) {
+                for (var key in item) {
+                    if (!item.hasOwnProperty(key)) continue;
+                    var value = item[key];
+                    if (value === null || value === undefined) continue;
+                    if (String(value).toUpperCase().indexOf(filter) > -1) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+        }
+
+        currentPage = 1;   // search karte hi page 1 pe reset
+        renderTable();
+        renderPagination();
+    }
+
+    // Typing karte hi search chale (keyup)
+    //document.getElementById("MyInput2").addEventListener("keyup", myFunction2);
+    function DeleleNew(ID) {
+        var ans = confirm("Are you sure you want to delete this Record?");
+        if (ans) {
+            $.ajax({
+                url: "/Product/DeleteProduct/" + ID,
+                type: "POST",
+                contentType: "application/ssjson;charset=UTF-8",
+                dataType: "json",
+                success: function (result) {
+                    loadData();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+    };
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll(".ss");
+
+        inputs.forEach(input => {
+            input.addEventListener("input", function () {
+                if (input.value.trim() !== "") {
+                    input.style.border = "2px solid green"; // new border
+                } else {
+                    input.style.border = "2px solid #077A7D"; // original
+                }
+            });
+        });
+    });
+    
+    
+    function Ledger(id) {
+        //alert(id);
+        loadProduct(id);
+        $('#myModalid').modal('show');
+
+    };
+    function loadProduct(ID) {
+        var dfdfdf = 1;
+        var empObj = {
+            Id: ID,
+        };
+        $.ajax({
+            url: "/Product/GetProductID",
+            data: JSON.stringify(empObj),
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (item) {
+                var html = '';
+                html += '<tr>';
+                html += '<td style="font-weight:bold">Barcode:</td> <td class="aa" style="font-weight:normal">' + item.Barcode + '</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td style="font-weight:bold">Batch No:</td> <td class="aa" style="font-weight:normal">' + item.BatchNo + '</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td class="aa" colspan="2" style="font-weight:normal">' + item.CId + '-' + item.CategoryName + ' / ' + item.SCId + '-' + item.SubCategoryName + '</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td style="font-weight:bold">Item:</td> <td class="aa" style="font-weight:normal">' + item.Item + '</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td style="font-weight:bold">Colour:</td> <td class="aa" style="font-weight:normal">' + item.Colour + '</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td style="font-weight:bold">Size:</td> <td class="aa" style="font-weight:normal">' + item.Size + '</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td style="font-weight:bold">Rate:</td> <td class="aa" style="font-weight:normal">' + item.CostRate + ' / ' + item.SaleRate + '</td>';
+                html += '</tr>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td style="font-weight:bold">Dis(%):</td> <td class="aa" style="font-weight:normal">' + item.DisPer + '</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td style="font-weight:bold">Dis(Amt):</td> <td class="aa" style="font-weight:normal">' + item.DisAmt + '</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td style="font-weight:bold">Sale Amount:</td> <td class="aa" style="font-weight:normal">' + item.SaleAmt + '</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td style="font-weight:bold">Packing:</td> <td class="aa" style="font-weight:normal">' + item.UnitPack + '</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td style="font-weight:bold">StockInHand:</td> <td class="aa" style="font-weight:normal">' + item.StockInHand + ' ' + item.Unit + '</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td style="font-weight:bold">Location:</td> <td class="aa" style="font-weight:normal">' + item.RackName + ' <br /><i style="opacity:0.4">' + item.Status + '</i></td>';
+                html += '</tr>';
+                $('.pdbody').html(html);
+            },
+            error: function (errormessage) {
+                //alert(errormessage.responseText);
+            }
+        });
+    };
+
+</script>
+<script>
+    $(document).ready(function () {
+        function calculateDiscount() {
+            let saleRate = parseFloat($("#SaleRate").val()) || 0;
+            let disPer = parseFloat($("#DisPer").val()) || 0;
+            //alert(saleRate + "---" + disPer);
+            if (!isNaN(disPer)) {
+                let disAmt = (saleRate * disPer / 100).toFixed(2);
+                let saleAmt = (saleRate - disAmt).toFixed(2);
+
+                $("#DisAmt").val(disAmt);
+                $("#SaleAmt").val(saleAmt);
+            } else {
+                // No discount percentage, show sale rate as sale amount
+                $("#DisAmt").val(0);
+                $("#DisPer").val(0);
+                $("#SaleAmt").val(saleRate.toFixed(2));
+            }
+        };
+        function calculateDiscount2() {
+            let saleRate = parseFloat($("#SaleRate").val()) || 0;
+            let disamt = parseFloat($("#DisAmt").val()) || 0;
+            //alert(saleRate + "---" + disPer);
+            if (!isNaN(disamt)) {
+                let disPer = (disamt / saleRate * 100).toFixed(2);
+                let saleAmt = (saleRate - disamt).toFixed(2);
+
+                $("#DisPer").val(disPer);
+                $("#SaleAmt").val(saleAmt);
+            } else {
+                // No discount percentage, show sale rate as sale amount
+                $("#DisAmt").val(0);
+                $("#DisPer").val(0);
+                $("#SaleAmt").val(saleRate.toFixed(2));
+            }
+        };
+        function calculateSingle() {
+            let saleRate = parseFloat($("#SaleRate").val()) || 0;
+            $("#DisAmt").val(0);
+            $("#DisPer").val(0);
+            $("#SaleAmt").val(saleRate.toFixed(2));
+        }
+
+        // Trigger calculation when SaleRate or DisPer changes
+        $("#SaleRate").on('input', calculateSingle);
+        $("#DisPer").on('input', calculateDiscount);
+        $("#DisAmt").on('input', calculateDiscount2);
+    });
+</script>
+
+
+
+
+<!-- Modal -->
+<div id="myModalid" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-sm">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <p style="text-align:center;font-size:18px;font-weight:bold;color:#b200ff">PRODUCT DETAILS</p>
+            </div>
+            <div class="modal-body xyz">
+                <div class="table-content mt-2">
+                    <table class="table table-sm table-bordered" id="stbl">
+                        <tbody class="pdbody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

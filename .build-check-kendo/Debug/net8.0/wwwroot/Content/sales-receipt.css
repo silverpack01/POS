@@ -1,0 +1,117 @@
+.thermal-receipt { display: none; }
+
+@media print {
+    @page { size: 80mm auto; margin: 0; }
+
+    body.thermal-print-active {
+        margin: 0;
+        background: #fff;
+    }
+
+    body.thermal-print-active > *:not(#thermal-receipt) {
+        display: none !important;
+    }
+
+    .thermal-receipt {
+        display: block !important;
+        width: 72mm;
+        margin: 0 auto;
+        padding: 4mm 2mm;
+        color: #000;
+        background: #fff;
+        box-sizing: border-box;
+        font: 11px/1.35 Arial, sans-serif;
+    }
+
+    .receipt-business {
+        font-size: 18px;
+        font-weight: 800;
+        text-align: center;
+    }
+
+    .receipt-muted,
+    .receipt-thanks,
+    .receipt-payment {
+        text-align: center;
+        font-size: 10px;
+    }
+
+    .receipt-title {
+        margin: 3px 0;
+        font-weight: 800;
+        text-align: center;
+        letter-spacing: .5px;
+    }
+
+    .receipt-rule {
+        margin: 5px 0;
+        border-top: 1px dashed #000;
+    }
+
+    .receipt-meta,
+    .receipt-total-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .receipt-customer {
+        margin: 4px 0;
+        overflow-wrap: anywhere;
+    }
+
+    .receipt-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    .receipt-table th,
+    .receipt-table td {
+        padding: 2px 1px;
+        text-align: left;
+        vertical-align: top;
+        word-break: break-word;
+    }
+
+    .receipt-table th {
+        border-bottom: 1px solid #000;
+    }
+
+    .receipt-table th:nth-child(1),
+    .receipt-table td:nth-child(1) { width: 32%; }
+
+    .receipt-table th:nth-child(2),
+    .receipt-table td:nth-child(2) {
+        width: 11%;
+        text-align: center;
+    }
+
+    .receipt-table th:nth-child(3),
+    .receipt-table td:nth-child(3) {
+        width: 20%;
+        text-align: center;
+    }
+
+    .receipt-table th:nth-child(4),
+    .receipt-table td:nth-child(4) {
+        width: 16%;
+        text-align: right;
+    }
+
+    .receipt-table th:nth-child(5),
+    .receipt-table td:nth-child(5) { width: 21%; }
+
+    .receipt-money {
+        text-align: right !important;
+    }
+
+    .receipt-grand-total {
+        margin-top: 3px;
+        padding-top: 3px;
+        border-top: 1px solid #000;
+        font-size: 14px;
+        font-weight: 800;
+    }
+}
+

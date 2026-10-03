@@ -1,0 +1,94 @@
+﻿@model ERPSolution.Models.TblSubSubSubHead
+@{
+    ViewBag.Title = "SubSubSubHead";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+<div class="container">
+    <section class="mt-3">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <p style="font-weight: bold; font-size: 28px; color: #1b2a4a">4th Head Account</p>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="@Url.Action("SubSubSubHeadList","Accounts")"  class="btn btn-primary form-control">4th Head List</a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="@Url.Action("Home","Admin")" class="btn btn-secondary form-control">Back</a>
+            </div>
+        </div>
+    </section>
+    <section class="mt-4 shadow p-2">
+        @using (Html.BeginForm("SubSubSubHead", "Accounts"))
+        {
+            @Html.HiddenFor(x => x.Id, new { @id = "recordId", @class = "form-control" })
+            @Html.HiddenFor(x => x.HeadCode, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.HeadName, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.SubHeadCode, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.SubHeadName, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.SubSubHeadCode, new { @class = "form-control" })
+            @Html.HiddenFor(x => x.SubSubSubHeadCode, new { @class = "form-control" })
+
+            <div class="row">
+                <div class="col-md-12">
+                    <p style="text-align:center;color:#808080;font-weight:bold">@ViewBag.msg</p>
+                </div>
+                <div class="col-md-4">
+                    <label><b>Select Account:</b></label>
+                    @Html.TextBoxFor(x => x.SubSubHeadName, new { @class = "form-control form-control-lg" })
+                </div>
+
+                <div class="col-md-6">
+                    <label><b>4th Head Name:</b></label>
+                    @Html.TextBoxFor(x => x.SubSubSubHeadName, new { @class = "form-control" })
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" class="btn form-control" value="Save & Update" style="background-color: #1b2a4a; color: white; margin-top: 24px" />
+                </div>
+            </div>
+        }
+    </section>
+
+</div>
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.14.1.min.js"></script>
+<link href="~/Content/KendoUI/default-ocean-blue.css" rel="stylesheet" />
+<script src="~/Content/KendoUI/jszip.min.js"></script>
+<script src="~/Content/KendoUI/kendo.all.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var dataSource1 = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "/Accounts/getSubSubHead",
+                    dataType: "json"
+                }
+            }
+        });
+        $("#SubSubHeadName").kendoMultiColumnComboBox({
+            dataTextField: "sub_subHead_Name",
+            dataValueField: "sub_subHead_Code",
+            height: 500,
+            columns: [
+                { field: "sub_subHead_Name", title: "Sub SubHead Name", width: 350 }
+            ],
+            filter: "contains",
+            filterFields: ["sub_subHead_Code", "sub_subHead_Name", "subHeadCode", "subHeadName"],
+            dataSource: dataSource1,
+            change: function () {
+                // Get the selected item from the combo box
+                var selectedItem = this.dataItem(this.selectedIndex);
+
+                if (selectedItem) {
+                    //  $("#Current Data column name").val(selectedItem.Previous Data column name);
+                    $("#HeadCode").val(selectedItem.HeadCode);
+                    $("#HeadName").val(selectedItem.HeadName);
+                    $("#SubHeadCode").val(selectedItem.subHeadCode);
+                    $("#SubHeadName").val(selectedItem.subHeadName);
+                    $("#SubSubHeadCode").val(selectedItem.sub_subHead_Code);
+                    $("#SubSubHeadName").val(selectedItem.sub_subHead_Name);
+                }
+            }
+        });
+    });
+</script>
+
