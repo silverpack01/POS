@@ -242,7 +242,9 @@ namespace ERPSolution.Controllers
             ViewBag.units = new SelectList(units, "UnitName", "UnitName","kg");
             return View(model);
         }
-
+        
+        
+        // product adjustment start
         public ActionResult ProductAdjustment()
         {
             return View();
@@ -262,26 +264,7 @@ namespace ERPSolution.Controllers
 
         public JsonResult AddProductAdjustment([FromBody] TblProductAdjustment model)
         {
-            if (model == null || model.ProductId <= 0)
-            {
-                return Json(new { success = false, message = "Please Select Item" });
-            }
-
-            if (Convert.ToDecimal(model.StockIn) <= 0 && Convert.ToDecimal(model.StockOut) <= 0)
-            {
-                return Json(new { success = false, message = "Please Enter Stock In Or Stock Out" });
-            }
-
-            if (Convert.ToDecimal(model.StockIn) > 0 && Convert.ToDecimal(model.StockOut) > 0)
-            {
-                return Json(new { success = false, message = "Enter Stock In Or Stock Out" });
-            }
-
             var product = db.TblProducts.FirstOrDefault(x => x.Id == model.ProductId);
-            if (product == null)
-            {
-                return Json(new { success = false, message = "Item was not found." });
-            }
 
             var adjustment = model.Id > 0
                 ? db.TblProductAdjustments.FirstOrDefault(x => x.Id == model.Id)
@@ -350,25 +333,15 @@ namespace ERPSolution.Controllers
                 return Json(new { success = false, message = "Adjustment was not found." });
             }
 
-            var product = db.TblProducts.FirstOrDefault(x =>
-                x.Barcode == adjustment.Barcode && x.BatchNo == adjustment.BatchNo);
-
-            if (product == null)
-            {
-                return Json(new { success = false, message = "Item was not found." });
-            }
-
-            product.StockInHand = Convert.ToDecimal(product.StockInHand)
-                - Convert.ToDecimal(adjustment.StockIn)
-                + Convert.ToDecimal(adjustment.StockOut);
-
             db.TblProductAdjustments.Remove(adjustment);
             db.SaveChanges();
-            UpdateStock(product);
 
             return Json(new { success = true });
         }
 
+        // end
+        
+        
         public JsonResult AddNewProduct([FromBody] TblProduct model)
         {
             if (model == null)

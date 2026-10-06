@@ -3,24 +3,24 @@
   "WorkspaceRootPath": "D:\\C#\\ERP\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|d:\\c#\\erp\\erp\\views\\accounts\\accountreg.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|solutionrelative:erp\\views\\accounts\\accountreg.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|d:\\c#\\erp\\erp\\models\\tblproductadjustment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|solutionrelative:erp\\models\\tblproductadjustment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|d:\\c#\\erp\\erp\\views\\shared\\_homelayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|solutionrelative:erp\\views\\shared\\_homelayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|d:\\c#\\erp\\erp\\models\\dotpos_dbentities.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|solutionrelative:erp\\models\\dotpos_dbentities.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|d:\\c#\\erp\\erp\\views\\product\\productadjustment.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|solutionrelative:erp\\views\\product\\productadjustment.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|d:\\c#\\erp\\erp\\models\\tblproductadjustment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|solutionrelative:erp\\models\\tblproductadjustment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|d:\\c#\\erp\\erp\\controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|solutionrelative:erp\\controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|d:\\c#\\erp\\erp\\views\\product\\productadjustment.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{7182A548-9C79-4F1D-B112-46388BB67E28}|ERP\\ERP.csproj|solutionrelative:erp\\views\\product\\productadjustment.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -35,64 +35,67 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "AccountReg.cshtml",
-              "DocumentMoniker": "D:\\C#\\ERP\\ERP\\Views\\Accounts\\AccountReg.cshtml",
-              "RelativeDocumentMoniker": "ERP\\Views\\Accounts\\AccountReg.cshtml",
-              "ToolTip": "D:\\C#\\ERP\\ERP\\Views\\Accounts\\AccountReg.cshtml",
-              "RelativeToolTip": "ERP\\Views\\Accounts\\AccountReg.cshtml",
-              "ViewState": "AgIAAF4AAAAAAAAAAAAiwHgAAABDAAAAAAAAAA==",
+              "Title": "_HomeLayout.cshtml",
+              "DocumentMoniker": "D:\\C#\\ERP\\ERP\\Views\\Shared\\_HomeLayout.cshtml",
+              "RelativeDocumentMoniker": "ERP\\Views\\Shared\\_HomeLayout.cshtml",
+              "ToolTip": "D:\\C#\\ERP\\ERP\\Views\\Shared\\_HomeLayout.cshtml",
+              "RelativeToolTip": "ERP\\Views\\Shared\\_HomeLayout.cshtml",
+              "ViewState": "AgIAAFMBAAAAAAAAAAAAAGYBAABOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-10-01T13:24:21.914Z",
+              "WhenOpened": "2026-10-05T13:33:52.425Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "TblProductAdjustment.cs",
               "DocumentMoniker": "D:\\C#\\ERP\\ERP\\Models\\TblProductAdjustment.cs",
               "RelativeDocumentMoniker": "ERP\\Models\\TblProductAdjustment.cs",
               "ToolTip": "D:\\C#\\ERP\\ERP\\Models\\TblProductAdjustment.cs",
               "RelativeToolTip": "ERP\\Models\\TblProductAdjustment.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-10-01T12:47:39.97Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "dotpos_dbEntities.cs",
               "DocumentMoniker": "D:\\C#\\ERP\\ERP\\Models\\dotpos_dbEntities.cs",
               "RelativeDocumentMoniker": "ERP\\Models\\dotpos_dbEntities.cs",
               "ToolTip": "D:\\C#\\ERP\\ERP\\Models\\dotpos_dbEntities.cs",
               "RelativeToolTip": "ERP\\Models\\dotpos_dbEntities.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAQwB8AAABWAAAAAAAAAA==",
+              "ViewState": "AgIAABMAAAAAAAAAAAAQwB8AAABWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-01T12:46:24.642Z"
+              "WhenOpened": "2026-10-01T12:46:24.642Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "ProductAdjustment.cshtml",
               "DocumentMoniker": "D:\\C#\\ERP\\ERP\\Views\\Product\\ProductAdjustment.cshtml",
               "RelativeDocumentMoniker": "ERP\\Views\\Product\\ProductAdjustment.cshtml",
               "ToolTip": "D:\\C#\\ERP\\ERP\\Views\\Product\\ProductAdjustment.cshtml",
               "RelativeToolTip": "ERP\\Views\\Product\\ProductAdjustment.cshtml",
-              "ViewState": "AgIAAKUAAAAAAAAAAAAAAKkAAAAvAAAAAAAAAA==",
+              "ViewState": "AgIAAG4BAAAAAAAAAAAgwLoAAABJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-10-01T12:45:51.776Z"
+              "WhenOpened": "2026-10-01T12:45:51.776Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "ProductController.cs",
               "DocumentMoniker": "D:\\C#\\ERP\\ERP\\Controllers\\ProductController.cs",
               "RelativeDocumentMoniker": "ERP\\Controllers\\ProductController.cs",
               "ToolTip": "D:\\C#\\ERP\\ERP\\Controllers\\ProductController.cs",
               "RelativeToolTip": "ERP\\Controllers\\ProductController.cs",
-              "ViewState": "AgIAAOkAAAAAAAAAAAAUwPwAAAAlAAAAAAAAAA==",
+              "ViewState": "AgIAAPgAAAAAAAAAAAAAwAEBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-01T12:45:47.798Z"
+              "WhenOpened": "2026-10-01T12:45:47.798Z",
+              "EditorCaption": ""
             }
           ]
         }

@@ -193,10 +193,6 @@
         loadProduct();
         loadAdjustment();
 
-        $("#SearchItem, #SearchDateFrom, #SearchDateTo").on("input change", function () {
-            filterAdjustment();
-        });
-
         $("#btnSaveAdjustment").click(function () {
             SaveAdjustment();
         });
@@ -218,6 +214,7 @@
         $(document).on("click", ".delete-adjustment", function () {
             deleteAdjustment($(this).data("id"));
         });
+
     });
 
     var adjustmentData = [];
@@ -376,9 +373,9 @@
     }
 
     function deleteAdjustment(id) {
-        if (!confirm("Are you sure you want to delete this adjustment?")) {
-            return;
-        }
+        @* if (!confirm("Are you sure you want to delete this adjustment?")) { *@
+        @*     return; *@
+        @* } *@
 
         $.ajax({
             url: "/Product/DeleteProductAdjustment?id=" + id,
